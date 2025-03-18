@@ -1,0 +1,145 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Exception;
+use Carbon\Carbon;
+use App\Models\Role;
+use App\Models\User;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use App\Traits\HttpResponses;
+use App\Models\PasswordResetToken;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\LoginUserRequest;
+use App\Http\Requests\StoreUserRequest;
+use Illuminate\Support\Facades\Validator;
+use App\Notifications\ResetPasswordNotification;
+
+class AuthController extends Controller
+{
+    use HttpResponses;
+
+    /**
+     * Handle user login.
+     */
+    public function login(LoginUserRequest $request)
+    {
+        // Tentative de connexion de l'utilisateur
+        if (!Auth::attempt($request->validated())) {
+            return $this->error(null, 'Invalid credentials', 401);
+        }
+
+        $user = Auth::user();
+        return $this->success([
+            'user' => $user,
+            'token' => $user->createToken('API Token')->plainTextToken
+        ], 'Login successful');
+    }
+
+    /**
+     * Handle user registration.
+     */
+    public function register(StoreUserRequest $request)
+    {
+        try {
+            // Vérification et attribution du rôle 'tourist'
+            $roleId = static::getRoleId('tourist');
+            
+            $user = User::create([
+                'name' => $request->validated('name'),
+                'email' => $request->validated('email'),
+                'role_id' => $roleId,
+                'password' => Hash::make($request->validated('password')),
+            ]);
+
+            return $this->success([
+                'user' => $user,
+                'token' => $user->createToken('API Token')->plainTextToken
+            ], 'User registered successfully', 201);
+        } catch (Exception $e) {
+            return $this->error(null, 'User registration failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Handle user logout.
+     */
+    public function logout(Request $request)
+    {
+        try {
+            $request->user()->currentAccessToken()->delete();
+            return $this->success(null, 'Successfully logged out');
+        } catch (Exception $e) {
+            return $this->error(null, 'Logout failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Send a password reset link via email.
+     */
+    public function sendResetLink(Request $request)
+    {
+        $request->validate(['email' => 'required|email|exists:users,email']);
+
+        try {
+            $token = Str::random(60);
+            PasswordResetToken::updateOrCreate(
+                ['email' => $request->email],
+                ['token' => $token, 'created_at' => now()]
+            );
+
+            $user = User::where('email', $request->email)->firstOrFail();
+            $user->notify(new ResetPasswordNotification($token));
+
+            return $this->success(null, 'Password reset email sent.');
+        } catch (Exception $e) {
+            return $this->error(null, 'Failed to send reset email: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Reset user password.
+     */
+    public function resetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'token' => 'required',
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->error($validator->errors(), 'Invalid input', 400);
+        }
+
+        $reset = PasswordResetToken::where('email', $request->email)
+            ->where('token', $request->token)
+            ->first();
+
+        if (!$reset || Carbon::parse($reset->created_at)->addMinutes(60)->isPast()) {
+            return $this->error(null, 'Invalid or expired token', 400);
+        }
+
+        try {
+            $user = User::where('email', $request->email)->firstOrFail();
+            $user->update(['password' => Hash::make($request->password)]);
+            $reset->delete();
+
+            return $this->success(null, 'Password successfully reset.');
+        } catch (Exception $e) {
+            return $this->error(null, 'Password reset failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Get the ID of a user role.
+     */
+    public static function getRoleId($role)
+    {
+        // Assurez-vous que le rôle existe avant d'essayer de récupérer son ID
+        $role = Role::where('name', $role)->first();
+        return $role ? $role->id : null;
+    }
+}
