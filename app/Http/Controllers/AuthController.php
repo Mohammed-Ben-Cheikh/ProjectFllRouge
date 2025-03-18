@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Exception;
 use Carbon\Carbon;
+use DateRangeError;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Str;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use Illuminate\Support\Facades\Validator;
+use App\Notifications\ActivationNotification;
 use App\Notifications\ResetPasswordNotification;
 
 class AuthController extends Controller
@@ -44,15 +46,22 @@ class AuthController extends Controller
     public function register(StoreUserRequest $request)
     {
         try {
+            $token = Str::random(60);
             // Vérification et attribution du rôle 'tourist'
             $roleId = static::getRoleId('tourist');
-            
+
             $user = User::create([
                 'name' => $request->validated('name'),
                 'email' => $request->validated('email'),
                 'role_id' => $roleId,
+                'activation_token' => $token,
                 'password' => Hash::make($request->validated('password')),
             ]);
+
+            if ($user) {
+                // Envoyer un e-mail d'activation
+                $user->notify(new ActivationNotification($token));
+            }
 
             return $this->success([
                 'user' => $user,
@@ -62,6 +71,29 @@ class AuthController extends Controller
             return $this->error(null, 'User registration failed: ' . $e->getMessage(), 500);
         }
     }
+
+    /**
+     * Activate user account.
+     */
+    public function activateAccount(Request $request)
+    {
+        $request->validate(['token' => 'required']);
+
+        $user = User::where('activation_token', $request->token)->first();
+
+        if (!$user) {
+            return $this->error(null, 'Invalid token', 400);
+        }
+
+        try {
+            $user->update(['activated' => true, 'activation_token' => null, 'email_verified_at' => now()]);
+            return $this->success(null, 'Account activated successfully');
+        } catch (Exception $e) {
+            return $this->error(null, 'Account activation failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+
 
     /**
      * Handle user logout.
@@ -142,4 +174,5 @@ class AuthController extends Controller
         $role = Role::where('name', $role)->first();
         return $role ? $role->id : null;
     }
+
 }

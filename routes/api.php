@@ -5,8 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
 // Authentification
-Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::get('/account/activate', [AuthController::class, 'activateAccount']);
 Route::post('/password-reset', [AuthController::class, 'sendResetLink']);
 Route::post('/password-reset/confirm', [AuthController::class, 'resetPassword']);
 
