@@ -5,13 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Favoris extends Model
+class Employe extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'riad_id'
+        'nom',
+        'prenom',
+        'email',
+        'telephone',
+        'adresse',
+        'poste',
+        'salaire',
+        'date_embauche',
+        'riad_id',
+        'user_id'
     ];
 
     public function user()
@@ -22,5 +30,10 @@ class Favoris extends Model
     public function riad()
     {
         return $this->belongsTo(Riad::class);
+    }
+
+    public function entreprise()
+    {
+        return $this->belongsTo(Entreprise::class);
     }
 }

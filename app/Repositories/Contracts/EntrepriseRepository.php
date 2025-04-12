@@ -2,14 +2,12 @@
 
 namespace App\Repositories\Contracts;
 
-interface ReservationRepository
+interface EntrepriseRepository
 {
     public function all();
     public function findBySlug(string $slug);
     public function create(array $data);
-    public function update($reservation, array $data);
+    public function update($entreprise, array $data);
     public function delete(string $slug);
     public function findByUser(string $userSlug);
-    public function findByChambre(string $chambreSlug);
-    public function findByStatus(string $status);
 }

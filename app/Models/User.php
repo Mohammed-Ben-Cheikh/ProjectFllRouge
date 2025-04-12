@@ -59,7 +59,40 @@ class User extends  Authenticatable implements JWTSubject
         return $this->belongsTo(Role::class);
     }
 
-        // Rest omitted for brevity
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
+
+    public function avisRiads()
+    {
+        return $this->hasMany(AvisRiads::class);
+    }
+
+    public function avisChambers()
+    {
+        return $this->hasMany(AvisChambers::class);
+    }
+
+    public function avisServices()
+    {
+        return $this->hasMany(AvisServices::class);
+    }
+
+    public function favoris()
+    {
+        return $this->hasMany(Favoris::class);
+    }
+
+    public function riads()
+    {
+        return $this->hasMany(Riad::class);
+    }
+
+    public function entreprises()
+    {
+        return $this->hasMany(Entreprise::class);
+    }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
@@ -83,7 +116,7 @@ class User extends  Authenticatable implements JWTSubject
 
     public function getSlugOptions(): SlugOptions
     {
-        return SlugOptions::create() 
+        return SlugOptions::create()
             ->generateSlugsFrom('name') // Génère le slug à partir du nom
             ->saveSlugsTo('username')
             ->slugsShouldBeNoLongerThan(50); // Limite la longueur du slug à 50 caractères

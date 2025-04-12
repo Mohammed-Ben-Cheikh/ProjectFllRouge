@@ -35,47 +35,35 @@ class RiadRepositoryData implements RiadRepository
 
     public function delete(string $slug)
     {
-        return Riad::where('slug', $slug)->delete();
+        $riad = $this->findBySlug($slug);
+        if (!$riad) {
+            return $this->error('', 'Riad not found', 404);
+        }
+        $riad->delete();
+        return $this->success('', 'Riad deleted successfully', 200);
     }
 
-    public function findByUser(string $username)
+    public function findByUser(string $userSlug)
     {
-        // Check if the username is empty
-        if (empty($username)) {
-            return $this->error('', 'username is required', 400);
+        $riads = Riad::whereHas('user', function($query) use ($userSlug) {
+            $query->where('slug', $userSlug);
+        })->get();
+
+        if ($riads->isEmpty()) {
+            return $this->error('', 'No riads found for this user', 404);
         }
-        // Check if the username is valid
-        if (!is_string($username)) {
-            return $this->error('', 'username must be a string', 400);
-        }
-        if (!$user = User::where('username', $username)->first()) {
-            return $this->error('', 'user not found', 404);
-        }
-        // Check if the user has a riad
-        if (!Riad::where('user_id', $username)->exists()) {
-            return $this->error('', 'username has no riad', 404);
-        }
-        return Riad::where('user_id', $user)->get();
+        return $riads;
     }
 
     public function findByVille(string $villeSlug)
     {
-        // Check if the username is empty
-        if (empty($villeSlug)) {
-            return $this->error('', 'ville slug is required', 400);
-        }
-        // Check if the username is valid
-        if (!is_string($villeSlug)) {
-            return $this->error('', 'ville slug must be a string', 400);
-        }
-        if (!$ville = Ville::where('slug', $villeSlug)->first()) {
-            return $this->error('', 'ville not found', 404);
-        }
-        // Check if the user has a riad
-        if (!Riad::where('ville_id', $villeSlug)->exists()) {
-            return $this->error('', 'ville slug has no riad', 404);
-        }
-        return Riad::where('ville_id', $ville)->get();
-    }
+        $riads = Riad::whereHas('ville', function($query) use ($villeSlug) {
+            $query->where('slug', $villeSlug);
+        })->get();
 
+        if ($riads->isEmpty()) {
+            return $this->error('', 'No riads found in this ville', 404);
+        }
+        return $riads;
+    }
 }

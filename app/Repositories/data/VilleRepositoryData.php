@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Repositories\Contracts;
+namespace App\Repositories\data;
 
 use App\Models\Ville;
+use App\Traits\HttpResponses;
+use App\Repositories\Contracts\VilleRepository;
 
-class VilleRepositoryData
+class VilleRepositoryData implements VilleRepository
 {
+    use HttpResponses;
 
     public function all()
     {

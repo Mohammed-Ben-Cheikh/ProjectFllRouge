@@ -1,18 +1,21 @@
 <?php
 
-namespace App\Repositories\Contracts;
+namespace App\Repositories\data;
 
 use App\Models\Reservation;
+use App\Traits\HttpResponses;
+use App\Repositories\Contracts\ReservationRepository;
 
-class ReservationRepositoryData
+class ReservationRepositoryData implements ReservationRepository
 {
+    use HttpResponses;
 
     public function all()
     {
         return Reservation::all();
     }
 
-    public function findBySlug(string $slug)    
+    public function findBySlug(string $slug)
     {
         return Reservation::where('slug', $slug)->first();
     }
@@ -22,14 +25,15 @@ class ReservationRepositoryData
         return Reservation::create($data);
     }
 
-    public function update($reservation, array $data){
+    public function update($reservation, array $data)
+    {
         $reservation->update($data);
         return $reservation;
     }
 
     public function delete(string $slug)
     {
-        $reservation = Reservation::where('slug', $slug)->first();
+        $reservation = $this->findBySlug($slug);
         if (!$reservation) {
             return $this->error('', 'Reservation not found', 404);
         }
@@ -37,29 +41,36 @@ class ReservationRepositoryData
         return $this->success('', 'Reservation deleted successfully', 200);
     }
 
-    public function findByRiad(string $riadSlug)
+    public function findByUser(string $userSlug)
     {
-        $reservations = Reservation::where('riad_slug', $riadSlug)->get();
+        $reservations = Reservation::whereHas('user', function($query) use ($userSlug) {
+            $query->where('slug', $userSlug);
+        })->get();
+
         if ($reservations->isEmpty()) {
-            return $this->error('', 'Reservations not found', 404);
+            return $this->error('', 'No reservations found for this user', 404);
         }
         return $reservations;
     }
+
     public function findByChambre(string $chambreSlug)
     {
-        $reservations = Reservation::where('chambre_slug', $chambreSlug)->get();
+        $reservations = Reservation::whereHas('chambre', function($query) use ($chambreSlug) {
+            $query->where('slug', $chambreSlug);
+        })->get();
+
         if ($reservations->isEmpty()) {
-            return $this->error('', 'Reservations not found', 404);
+            return $this->error('', 'No reservations found for this chambre', 404);
         }
         return $reservations;
     }
-    public function findByClient(string $clientSlug)
+
+    public function findByStatus(string $status)
     {
-        $reservations = Reservation::where('client_slug', $clientSlug)->get();
+        $reservations = Reservation::where('statut', $status)->get();
         if ($reservations->isEmpty()) {
-            return $this->error('', 'Reservations not found', 404);
+            return $this->error('', 'No reservations found with this status', 404);
         }
         return $reservations;
     }
-    
 }
