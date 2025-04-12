@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AdminDashboard extends Model
+class Ville extends Model
 {
-    /** @use HasFactory<\Database\Factories\AdminDashboardFactory> */
+    /** @use HasFactory<\Database\Factories\VilleFactory> */
     use HasFactory;
 }

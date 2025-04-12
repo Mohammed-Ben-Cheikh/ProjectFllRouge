@@ -4,17 +4,17 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('reservations', function (Blueprint $table) {
+        Schema::create('service_reservations', function (Blueprint $table) {
             $table->id();
             $table->string('invoce')->nullable(); // Référence de la facture
-            $table->date('date_debut')->nullable(); // Date de début de la réservation
-            $table->date('date_fin')->nullable(); // Date de fin de la réservation
+            $table->datetime('date')->nullable(); // Date de début de la réservation
             $table->integer('nombre_personnes')->nullable(); // Nombre de personnes
             $table->enum('statut', ['en_attente', 'confirmee', 'annulee', 'terminee'])->default('en_attente');
             // Statut de la réservation
@@ -33,6 +33,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('reservations');
+        Schema::dropIfExists('service_reservations');
     }
 };

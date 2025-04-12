@@ -12,7 +12,7 @@ Route::post('/password-reset', [AuthController::class, 'sendResetLink']);
 Route::post('/password-reset/confirm', [AuthController::class, 'resetPassword']);
 
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:api')->group(function () {
 
     // Déconnexion
     Route::post('/logout', [AuthController::class, 'logout']);

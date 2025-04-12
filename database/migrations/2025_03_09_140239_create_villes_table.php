@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('riads', function (Blueprint $table) {
+        Schema::create('villes', function (Blueprint $table) {
             $table->id();
+            $table->string('nom')->unique();
+            $table->string('image_url')->nullable();
+            $table->string('description')->nullable();
+            $table->integer('toutal_riads')->default(0);
             $table->timestamps();
         });
     }
@@ -22,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('riads');
+        Schema::dropIfExists('villes');
     }
 };
