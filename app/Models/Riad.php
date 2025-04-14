@@ -4,19 +4,24 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Sluggable\SlugOptions;
+use Spatie\Sluggable\HasSlug;
 
 class Riad extends Model
 {
-    use HasFactory;
+    use HasFactory, HasSlug;
 
     protected $fillable = [
         'nom',
         'description',
         'adresse',
-        'ville_id',
-        'user_id',
         'telephone',
-        'email'
+        'fax',
+        'email',
+        'site_web',
+        'nombre_chambres',
+        'entreprise_id',
+        'ville_id',
     ];
 
     public function ville()
@@ -52,5 +57,23 @@ class Riad extends Model
     public function employes()
     {
         return $this->hasMany(Employe::class);
+    }
+
+    public function entreprise()
+    {
+        return $this->belongsTo(Entreprise::class);
+    }
+
+    public function services()
+    {
+        return $this->hasMany(Service::class);
+    }
+    
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('nom') // Génère le slug à partir du nom
+            ->saveSlugsTo('slug')
+            ->slugsShouldBeNoLongerThan(50); // Limite la longueur du slug à 50 caractères
     }
 }

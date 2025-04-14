@@ -5,15 +5,21 @@ namespace App\Http\Controllers;
 use App\Models\Ville;
 use App\Http\Requests\StoreVilleRequest;
 use App\Http\Requests\UpdateVilleRequest;
+use App\Repositories\Contracts\VilleRepository;
 
 class VilleController extends Controller
 {
+    protected $villeRepository;
+    public function __construct(VilleRepository $villeRepository)
+    {
+        $this->villeRepository = $villeRepository;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        return $this->villeRepository->all();
     }
 
     /**
@@ -21,15 +27,15 @@ class VilleController extends Controller
      */
     public function store(StoreVilleRequest $request)
     {
-        //
+        return $this->villeRepository->create($request->validated());
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Ville $ville)
+    public function show($slug)
     {
-        //
+        return $this->villeRepository->findBySlug($slug);
     }
 
     /**
@@ -37,7 +43,7 @@ class VilleController extends Controller
      */
     public function update(UpdateVilleRequest $request, Ville $ville)
     {
-        //
+        return $this->villeRepository->update($ville, $request->validated());
     }
 
     /**
@@ -45,6 +51,6 @@ class VilleController extends Controller
      */
     public function destroy(Ville $ville)
     {
-        //
+        return $this->villeRepository->delete($ville);
     }
 }

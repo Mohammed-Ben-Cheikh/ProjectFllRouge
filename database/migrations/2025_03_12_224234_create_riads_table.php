@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('riads', function (Blueprint $table) {
             $table->id(); // ID unique pour chaque riad
             $table->string('nom')->unique(); // Nom du riad, unique
+            $table->string('slug')->unique(); // Slug unique pour le riad
             $table->string('adresse')->nullable(); // Adresse du riad, nullable si non fournie
             $table->string('telephone')->nullable(); // Numéro de téléphone, nullable
             $table->string('fax')->nullable(); // Numéro de fax, nullable

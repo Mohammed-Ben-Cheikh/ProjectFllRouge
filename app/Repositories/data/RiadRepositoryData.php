@@ -14,56 +14,65 @@ class RiadRepositoryData implements RiadRepository
 
     public function all()
     {
-        return Riad::all();
+        return $this->success(['riads' => Riad::all()], 'Riads retrieved successfully', 200);
     }
 
     public function findBySlug(string $slug)
     {
-        return Riad::where('slug', $slug)->first();
+        return $this->success(['riad' => static::riad($slug)->first()], 'Riad found successfully', 200);
     }
 
     public function create(array $data)
     {
-        return Riad::create($data);
+        $riad = Riad::create($data);
+        return $this->success(['riad' => $riad], 'Riad created successfully', 200);
     }
 
-    public function update($riad, array $data)
+    public function update($slug, array $data)
     {
-        $riad->update($data);
-        return $riad;
+        $riad = static::riad($slug)->first();
+        if ($riad && $riad->update($data)) {
+            return $this->success(['riad' => $riad], 'Riad updated successfully', 200);
+        }
+        return $this->error('', 'Failed to update riad', 400);
     }
 
     public function delete(string $slug)
     {
-        $riad = $this->findBySlug($slug);
+        $riad = static::riad($slug)->first();
         if (!$riad) {
             return $this->error('', 'Riad not found', 404);
         }
-        $riad->delete();
-        return $this->success('', 'Riad deleted successfully', 200);
+        $riad->update(['destroy' => true]);
+        return $this->success(['riad' => $riad], 'Riad deleted successfully', 200);
     }
 
-    public function findByUser(string $userSlug)
+    public function findByEntreprise(string $Slug)
     {
-        $riads = Riad::whereHas('user', function($query) use ($userSlug) {
-            $query->where('slug', $userSlug);
+        $riads = Riad::whereHas('entreprise', function ($query) use ($Slug) {
+            $query->where('slug', $Slug);
         })->get();
 
         if ($riads->isEmpty()) {
-            return $this->error('', 'No riads found for this user', 404);
+            return $this->error('', 'No riads found for this entreprise', 404);
         }
         return $riads;
     }
 
-    public function findByVille(string $villeSlug)
+    public function findByVille(string $Slug)
     {
-        $riads = Riad::whereHas('ville', function($query) use ($villeSlug) {
-            $query->where('slug', $villeSlug);
+        $riads = Riad::whereHas('ville', function ($query) use ($Slug) {
+            $query->where('slug', $Slug);
         })->get();
 
         if ($riads->isEmpty()) {
-            return $this->error('', 'No riads found in this ville', 404);
+            return $this->error('', 'No riads found for this ville', 404);
         }
         return $riads;
+    }
+
+    public static function riad($slug)
+    {
+        return Riad::where('slug', $slug);
     }
 }
