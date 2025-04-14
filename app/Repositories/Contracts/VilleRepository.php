@@ -11,7 +11,7 @@ interface VilleRepository
 
     public function create(array $data);
 
-    public function update($category, array $data);
+    public function update($slug, array $data);
 
     public function delete(string $slug);
 }
