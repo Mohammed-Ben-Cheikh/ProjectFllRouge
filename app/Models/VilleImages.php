@@ -11,7 +11,8 @@ class VilleImages extends Model
 
     protected $fillable = [
         'ville_id',
-        'image_path'
+        'image_url',
+        'is_primary'
     ];
 
     public function ville()

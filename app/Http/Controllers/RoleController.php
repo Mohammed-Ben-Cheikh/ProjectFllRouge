@@ -35,7 +35,7 @@ class RoleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateRoleRequest $request, Role $role)
+    public function update(StoreRoleRequest $request, Role $role)
     {
         //
     }

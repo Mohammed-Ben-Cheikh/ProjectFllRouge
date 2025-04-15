@@ -7,6 +7,7 @@ use App\Http\Requests\StoreEntrepriseRequest;
 use App\Http\Requests\UpdateEntrepriseRequest;
 use App\Repositories\Contracts\EntrepriseRepository;
 use App\Traits\HttpResponses;
+use Illuminate\Http\Request;
 
 class EntrepriseController extends Controller
 {
@@ -64,5 +65,10 @@ class EntrepriseController extends Controller
     public function destroy($slug)
     {
         return $this->entrepriseRepository->delete($slug);
+    }
+
+    public function addImage($slug, Request $request)
+    {
+        return $this->entrepriseRepository->addImage($slug, $request);
     }
 }

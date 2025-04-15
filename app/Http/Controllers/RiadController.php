@@ -59,7 +59,7 @@ class RiadController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateRiadRequest $request, $slug)
+    public function update(StoreRiadRequest $request, $slug)
     {
         return $this->riadRepository->update($slug, $request->validated());
     }

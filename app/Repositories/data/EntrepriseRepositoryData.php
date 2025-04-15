@@ -3,7 +3,6 @@
 namespace App\Repositories\data;
 
 use App\Models\Entreprise;
-use App\Models\User;
 use App\Traits\HttpResponses;
 use App\Repositories\Contracts\EntrepriseRepository;
 use Illuminate\Support\Facades\Auth;
@@ -20,6 +19,10 @@ class EntrepriseRepositoryData implements EntrepriseRepository
 
     public function findBySlug(string $slug)
     {
+        $entreprise = static::entreprise($slug)->first();
+        if ($entreprise->destroy) {
+            return $this->error(null, 'Entreprise is deleted', 404);
+        }
         return $this->success(['entreprise' => static::entreprise($slug)->first()], 'Entreprise found successfully', 200);
     }
 
@@ -56,13 +59,27 @@ class EntrepriseRepositoryData implements EntrepriseRepository
     {
         $id = Auth::id();
         $entreprises = Entreprise::whereHas('user', function ($query) use ($id) {
-            $query->where('id', $id);
+            $query->where('id', $id)->where('destroy', '=', false);
         })->get();
 
         if ($entreprises->isEmpty()) {
             return $this->error(null, 'No entreprises found for this user', 404);
         }
-        return $entreprises;
+        return $this->success(['entreprises' => $entreprises], 'Entreprises retrieved successfully', 200);
+    }
+
+    public function addImage(string $slug, $data)
+    {
+        $data->validate(['image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048']);
+        if (isset($data)) {
+            $entreprise = static::entreprise($slug);
+            if (!$entreprise) {
+                return $this->error(null, 'Entreprise not found', 404);
+            }
+            $path = $data['image']->store('entreprises', 'public');
+            $entreprise->update(['image' => $path]);
+            return $this->success(['entreprise' => $entreprise->first()], 'Entreprise deleted successfully', 200);
+        }
     }
 
     public static function entreprise($slug)

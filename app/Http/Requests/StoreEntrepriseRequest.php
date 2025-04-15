@@ -29,7 +29,7 @@ class StoreEntrepriseRequest extends FormRequest
             'fax' => ['required', 'numeric'],
             'email' => ['required', 'email'],
             'site_web' => ['required', 'url'],
-            'description' => ['required', 'string'],
+            'description' => ['required', 'string']
         ];
     }
 }

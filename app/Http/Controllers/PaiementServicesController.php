@@ -35,7 +35,7 @@ class PaiementServicesController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Updatepaiement_servicesRequest $request, paiement_services $paiement_services)
+    public function update(Storepaiement_servicesRequest $request, paiement_services $paiement_services)
     {
         //
     }

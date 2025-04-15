@@ -11,7 +11,7 @@ class StoreChambreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,13 @@ class StoreChambreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'nom' => 'required|string|max:255',
+            'description' => 'required|string',
+            'prix' => 'required|numeric|min:0',
+            'capacite' => 'required|integer|min:1',
+            'disponibilite' => 'boolean',
+            'riad_id' => 'required|exists:riads,id',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ];
     }
 }

@@ -31,6 +31,8 @@ class StoreRiadRequest extends FormRequest
             'total_chambres' => ['required', 'integer', 'min:0'],
             'ville_id' => ['required', 'exists:villes,id'], // Assurez-vous que la ville existe
             'entreprise_id' => ['required', 'exists:entreprises,id'], // Assurez-vous que l'entreprise existe
+            'images' => ['required', 'array', 'max:5'],
+            'images.*' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ];
     }
 }

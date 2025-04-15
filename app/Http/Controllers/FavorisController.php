@@ -4,16 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\favoris;
 use App\Http\Requests\StorefavorisRequest;
-use App\Http\Requests\UpdatefavorisRequest;
+use App\Repositories\Contracts\FavorisRepository;
 
 class FavorisController extends Controller
 {
+    protected $favorisRepository;
+
+    public function __construct(FavorisRepository $favorisRepository)
+    {
+        $this->favorisRepository = $favorisRepository;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        return $this->favorisRepository->all();
     }
 
     /**
@@ -21,30 +28,38 @@ class FavorisController extends Controller
      */
     public function store(StorefavorisRequest $request)
     {
-        //
+        return $this->favorisRepository->create($request->validated());
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(favoris $favoris)
+    public function show($slug)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdatefavorisRequest $request, favoris $favoris)
-    {
-        //
+        return $this->favorisRepository->findBySlug($slug);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(favoris $favoris)
+    public function destroy($slug)
     {
-        //
+        return $this->favorisRepository->delete($slug);
+    }
+
+    /**
+     * Find favoris by user
+     */
+    public function findByUser($userSlug)
+    {
+        return $this->favorisRepository->findByUser($userSlug);
+    }
+
+    /**
+     * Find favoris by riad
+     */
+    public function findByRiad($riadSlug)
+    {
+        return $this->favorisRepository->findByRiad($riadSlug);
     }
 }

@@ -64,7 +64,7 @@ class AvisRepositoryData implements AvisRepository
 
     public function findByRiad(string $riadSlug)
     {
-        $avis = AvisRiads::where('riad_slug', $riadSlug)->get();
+        $avis = AvisRiads::where('slug', $riadSlug)->get();
         if ($avis->isEmpty()) {
             return $this->error('No avis found for this riad', 404);
         }
@@ -73,7 +73,7 @@ class AvisRepositoryData implements AvisRepository
 
     public function findByChambre(string $chambreSlug)
     {
-        $avis = AvisChambers::where('chambre_slug', $chambreSlug)->get();
+        $avis = AvisChambers::where('slug', $chambreSlug)->get();
         if ($avis->isEmpty()) {
             return $this->error('No avis found for this chambre', 404);
         }
@@ -82,7 +82,7 @@ class AvisRepositoryData implements AvisRepository
 
     public function findByService(string $serviceSlug)
     {
-        $avis = AvisServices::where('service_slug', $serviceSlug)->get();
+        $avis = AvisServices::where('slug', $serviceSlug)->get();
         if ($avis->isEmpty()) {
             return $this->error('No avis found for this service', 404);
         }

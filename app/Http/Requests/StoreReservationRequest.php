@@ -6,23 +6,21 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreReservationRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
-            //
+            'date_debut' => 'required|date|after:today',
+            'date_fin' => 'required|date|after:date_debut',
+            'statut' => 'required|string|in:pending,confirmed,cancelled,completed',
+            'user_id' => 'required|exists:users,id',
+            'chambre_id' => 'required|exists:chambres,id',
+            'nombre_personnes' => 'required|integer|min:1',
+            'prix_total' => 'required|numeric|min:0'
         ];
     }
 }

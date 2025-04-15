@@ -1,52 +1,76 @@
 <?php
 
-namespace App\Repositories\Contracts;
+namespace App\Repositories\data;
 
 use App\Models\Employe;
 use App\Models\Riad;
 use App\Traits\HttpResponses;
+use App\Repositories\Contracts\EmployeRepository;
 
-interface EmployeRepositoryData
+class EmployeRepositoryData implements EmployeRepository
 {
     use HttpResponses;
 
     public function all()
     {
-        return Employe::all();
+        return $this->success(['employes' => Employe::all()], 'Employes retrieved successfully', 200);
     }
 
-    public function findBySlug(string $username)
+    public function findBySlug(string $slug)
     {
-        return Employe::where('username', $username)->first();
+        $employe = Employe::where('slug', $slug)->first();
+        if (!$employe) {
+            return $this->error('', 'Employe not found', 404);
+        }
+        return $this->success(['employe' => $employe], 'Employe found successfully', 200);
     }
 
     public function create(array $data)
     {
-        return Employe::create($data);
+        $employe = Employe::create([
+            'nom' => $data['nom'],
+            'prenom' => $data['prenom'],
+            'email' => $data['email'],
+            'telephone' => $data['telephone'],
+            'adresse' => $data['adresse'],
+            'poste' => $data['poste'],
+            'salaire' => $data['salaire'],
+            'date_embauche' => $data['date_embauche'],
+            'riad_id' => $data['riad_id'],
+            'entreprise_id' => $data['entreprise_id'],
+            'user_id' => $data['user_id']
+        ]);
+
+        return $this->success(['employe' => $employe], 'Employe created successfully', 201);
     }
 
-    public function update($Employe, array $data)
+    public function update($employe, array $data)
     {
-        $Employe->update($data);
-        return $Employe;
+        if (!$employe->update($data)) {
+            return $this->error('', 'Failed to update employe', 400);
+        }
+        return $this->success(['employe' => $employe], 'Employe updated successfully', 200);
     }
 
-    public function delete(string $username)
+    public function delete(string $slug)
     {
-        $Employe = Employe::where('username', $username)->first();
-        if (!$Employe) {
+        $employe = Employe::where('slug', $slug)->first();
+        if (!$employe) {
             return $this->error('', 'Employe not found', 404);
         }
-        $Employe->delete();
+        $employe->delete();
         return $this->success('', 'Employe deleted successfully', 200);
     }
 
     public function findByRiad(string $riadSlug)
     {
-        $Employes = Employe::where('riad_id', Riad::where('slug', $riadSlug)->first())->get();
-        if ($Employes->isEmpty()) {
-            return $this->error('', 'Employes not found', 404);
+        $employes = Employe::whereHas('riad', function ($query) use ($riadSlug) {
+            $query->where('slug', $riadSlug);
+        })->get();
+
+        if ($employes->isEmpty()) {
+            return $this->error('', 'No employes found for this riad', 404);
         }
-        return $Employes;
+        return $this->success(['employes' => $employes], 'Employes found successfully', 200);
     }
 }

@@ -57,9 +57,9 @@ class AuthController extends Controller
                 'password' => Hash::make($request->validated('password')),
             ]);
             // Envoyer un e-mail d'activation
-            if ($user) {
-                $user->notify(new ActivationNotification($token));
-            }
+            // if ($user) {
+            //     $user->notify(new ActivationNotification($token));
+            // }
             return $this->success([
                 'user' => $user,
                 'token' => $this->jwtToken(['email' => $user->email, 'password' => $request->password]),

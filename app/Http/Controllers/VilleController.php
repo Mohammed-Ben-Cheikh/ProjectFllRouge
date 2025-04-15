@@ -41,7 +41,7 @@ class VilleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateVilleRequest $request, $slug)
+    public function update(StoreVilleRequest $request, $slug)
     {
         return $this->villeRepository->update($slug, $request->validated());
     }

@@ -1,33 +1,65 @@
 <?php
 
-namespace App\Repositories\Contracts;
+namespace App\Repositories\data;
 
 use App\Models\Chambre;
+use App\Models\ChambreImages;
 use App\Traits\HttpResponses;
+use App\Repositories\Contracts\ChambreRepository;
 
-class ChambreRepositoryData
+class ChambreRepositoryData implements ChambreRepository
 {
     use HttpResponses;
 
     public function all()
     {
-        return Chambre::all();
+        return $this->success(['chambres' => Chambre::all()], 'Chambres retrieved successfully', 200);
     }
 
     public function findBySlug(string $slug)
     {
-        return Chambre::where('slug', $slug)->first();
+        $chambre = Chambre::where('slug', $slug)->first();
+        if (!$chambre) {
+            return $this->error('', 'Chambre not found', 404);
+        }
+        return $this->success(['chambre' => $chambre], 'Chambre found successfully', 200);
     }
 
     public function create(array $data)
     {
-        return Chambre::create($data);
+        $chambre = Chambre::create([
+            'nom' => $data['nom'],
+            'description' => $data['description'],
+            'prix' => $data['prix'],
+            'capacite' => $data['capacite'],
+            'disponibilite' => $data['disponibilite'] ?? true,
+            'riad_id' => $data['riad_id']
+        ]);
+
+        if (isset($data['images']) && is_array($data['images'])) {
+            $isPrimary = true;
+            foreach ($data['images'] as $imageFile) {
+                $path = $imageFile->store('chambres', 'public');
+
+                ChambreImages::create([
+                    'chambre_id' => $chambre->id,
+                    'image_url' => $path,
+                    'is_primary' => $isPrimary
+                ]);
+
+                $isPrimary = false;
+            }
+        }
+
+        return $this->success(['chambre' => $chambre->load('images')], 'Chambre created successfully', 201);
     }
 
     public function update($chambre, array $data)
     {
-        $chambre->update($data);
-        return $chambre;
+        if (!$chambre->update($data)) {
+            return $this->error('', 'Failed to update chambre', 400);
+        }
+        return $this->success(['chambre' => $chambre], 'Chambre updated successfully', 200);
     }
 
     public function delete(string $slug)
@@ -42,10 +74,13 @@ class ChambreRepositoryData
 
     public function findByRiad(string $riadSlug)
     {
-        $chambres = Chambre::where('riad_slug', $riadSlug)->get();
+        $chambres = Chambre::whereHas('riad', function($query) use ($riadSlug) {
+            $query->where('slug', $riadSlug);
+        })->get();
+
         if ($chambres->isEmpty()) {
-            return $this->error('', 'Chambres not found', 404);
+            return $this->error('', 'No chambres found for this riad', 404);
         }
-        return $chambres;
+        return $this->success(['chambres' => $chambres], 'Chambres found successfully', 200);
     }
 }
