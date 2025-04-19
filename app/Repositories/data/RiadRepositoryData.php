@@ -3,6 +3,7 @@
 namespace App\Repositories\data;
 
 use App\Models\Riad;
+use App\Models\RiadImages;
 use App\Models\User;
 use App\Models\Ville;
 use App\Traits\HttpResponses;
@@ -25,7 +26,19 @@ class RiadRepositoryData implements RiadRepository
     public function create(array $data)
     {
         $riad = Riad::create($data);
-        return $this->success(['riad' => $riad], 'Riad created successfully', 200);
+        if (isset($data['images']) && is_array($data['images'])) {
+            $isPrimary = true;
+            foreach ($data['images'] as $imageFile) {
+                $path = $imageFile->store('riads', 'public');
+                RiadImages::create([
+                    'riad_id' => $riad->id,
+                    'image_url' => $path,
+                    'is_primary' => $isPrimary
+                ]);
+                $isPrimary = false;
+            }
+        }
+        return $this->success(['riad' => $riad->load('images')], 'Riad created successfully', 200);
     }
 
     public function update($slug, array $data)

@@ -29,10 +29,7 @@ class VilleRepositoryData implements VilleRepository
 
     public function create(array $data)
     {
-        $ville = Ville::create([
-            'nom' => $data['nom'],
-            'description' => $data['description']
-        ]);
+        $ville = Ville::create($data);
         if (isset($data['images']) && is_array($data['images'])) {
             $isPrimary = true;
             foreach ($data['images'] as $imageFile) {

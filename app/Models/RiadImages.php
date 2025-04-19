@@ -11,7 +11,8 @@ class RiadImages extends Model
 
     protected $fillable = [
         'riad_id',
-        'image_path'
+        'image_url',
+        'is_primary'
     ];
 
     public function riad()

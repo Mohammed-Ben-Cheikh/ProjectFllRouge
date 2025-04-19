@@ -22,13 +22,14 @@ class StoreChambreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nom' => 'required|string|max:255',
+            'nombre' => 'required|integer|max:255',
             'description' => 'required|string',
             'prix' => 'required|numeric|min:0',
-            'capacite' => 'required|integer|min:1',
-            'disponibilite' => 'boolean',
-            'riad_id' => 'required|exists:riads,id',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'nombre_lits' => 'required|integer|min:1|max:10',
+            'nombre_personnes' => 'required|integer|min:1|max:10',
+            'surface' => 'required|decimal|min:1',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'riad_id' => 'required|exists:riads,id'
         ];
     }
 }

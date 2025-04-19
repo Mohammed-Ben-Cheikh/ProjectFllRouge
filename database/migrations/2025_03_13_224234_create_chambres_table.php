@@ -13,13 +13,14 @@ return new class extends Migration
     {
         Schema::create('chambres', function (Blueprint $table) {
             $table->id();
-            $table->string('nom')->unique(); // Nom de la chambre, unique
+            $table->string('nombre')->unique(); // Nom de la chambre, unique
             $table->string('type')->nullable(); // Type de la chambre, nullable
             $table->string('description')->nullable(); // Description de la chambre, nullable
+            $table->json('equipements')->nullable(); // Equipements de la chambre, nullable
             $table->integer('prix')->nullable(); // Prix de la chambre, nullable
             $table->integer('nombre_lits')->nullable(); // Nombre de lits dans la chambre, nullable
             $table->integer('nombre_personnes')->nullable(); // Nombre de personnes pouvant séjourner dans la chambre, nullable
-            $table->integer('surface')->nullable();
+            $table->decimal('surface',8,2)->nullable();
             $table->enum('statut', ['available', 'unavailable', 'booked'])->default('available'); // Statut de la chambre, par défaut 'available'
             $table->timestamps();
         });

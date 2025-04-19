@@ -72,3 +72,4 @@ class EntrepriseController extends Controller
         return $this->entrepriseRepository->addImage($slug, $request);
     }
 }
+

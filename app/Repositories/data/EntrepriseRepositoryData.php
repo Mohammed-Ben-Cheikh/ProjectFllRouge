@@ -78,7 +78,7 @@ class EntrepriseRepositoryData implements EntrepriseRepository
             }
             $path = $data['image']->store('entreprises', 'public');
             $entreprise->update(['image' => $path]);
-            return $this->success(['entreprise' => $entreprise->first()], 'Entreprise deleted successfully', 200);
+            return $this->success(['entreprise' => static::entreprise($slug)->first()],'pdated successfully', 200);
         }
     }
 

@@ -11,7 +11,8 @@ class ChambreImages extends Model
 
     protected $fillable = [
         'chambre_id',
-        'image_path'
+        'image_url',
+        'is_primary'
     ];
 
     public function chambre()
