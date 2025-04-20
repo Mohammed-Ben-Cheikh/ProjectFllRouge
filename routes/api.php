@@ -29,6 +29,7 @@ Route::prefix('v1')->group(function () {
 
         // Déconnexion
         Route::post('/logout', [AuthController::class, 'logout']);
+        Route::post('image', [AuthController::class, 'updateImage']);
 
         // Routes protégées pour les administrateurs
         Route::middleware('role:admin')->group(function () {
