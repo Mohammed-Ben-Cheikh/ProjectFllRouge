@@ -23,6 +23,21 @@ class AuthController extends Controller
 {
     use HttpResponses, Jwt;
 
+    /**
+     * Get the authenticated user.
+     */
+    public function getUser($token)
+    {
+        try {
+            $user = $this->getUserFromToken($token);
+            if (!$user) {
+                return $this->error(null, 'Invalid token or user not found', 401);
+            }
+            return $this->success(['user' => $user]);
+        } catch (Exception $e) {
+            return $this->error(null, 'Failed to get user: ' . $e->getMessage(), 500);
+        }
+    }
 
     /**
      * Handle user login.
@@ -30,6 +45,17 @@ class AuthController extends Controller
     public function login(LoginUserRequest $request)
     {
         $credentials = $request->validated();
+        // Vérification des informations d'identification
+        if (!Auth::attempt($credentials)) {
+            $user = User::where('email', $credentials['email'])->first();
+            if (!$user) {
+                return $this->error(null, 'Email not found', 401);
+            }
+            if (!Hash::check($credentials['password'], $user->password)) {
+                return $this->error(null, 'Password is incorrect', 401);
+            }
+            return $this->error(null, 'Invalid credentials', 401);
+        }
         $token = $this->jwtToken($credentials);
         if (!Auth::user()) {
             return $this->error(null, 'Authentication failed', 401);
@@ -48,7 +74,7 @@ class AuthController extends Controller
         try {
             $token = Str::random(60);
             // Vérification et attribution du rôle 'tourist'
-            $roleId = static::getRoleId('admin');
+            $roleId = static::getRoleId('owner');
             $user = User::create([
                 'name' => $request->validated('name'),
                 'email' => $request->validated('email'),
@@ -116,7 +142,7 @@ class AuthController extends Controller
                 ['email' => $request->email],
                 ['token' => $token, 'created_at' => now()]
             );
-            $user = User::where('email', $request->email)->firstOrFail();
+            $user = User::where('email', $request->email)->first();
             $user->notify(new ResetPasswordNotification($token));
             return $this->success(null, 'Password reset email sent.');
         } catch (Exception $e) {

@@ -77,4 +77,15 @@ trait Jwt
             return $this->error(null, 'Could not refresh token', 500);
         }
     }
+
+    public function getUserFromToken($token)
+    {
+        try {
+            $user = JWTAuth::setToken($token)->authenticate();
+            // dd($user); // Debug
+            return $user;
+        } catch (JWTException $e) {
+            return $this->error(null, 'Could not get user from token: ' . $e->getMessage(), 500);
+        }
+    }
 }

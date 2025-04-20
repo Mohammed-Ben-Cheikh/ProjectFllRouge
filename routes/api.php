@@ -19,6 +19,7 @@ Route::prefix('v1')->group(function () {
 
     // Authentification
     Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/user/{token}', [AuthController::class, 'getUser']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::get('/account/activate', [AuthController::class, 'activateAccount']);
     Route::post('/password-reset', [AuthController::class, 'sendResetLink']);
