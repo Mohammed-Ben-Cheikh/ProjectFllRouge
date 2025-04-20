@@ -192,27 +192,28 @@ class AuthController extends Controller
             $request->validate([
                 'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
             ]);
-
             $user = Auth::user();
             if (!$user) {
                 return $this->error(null, 'User not authenticated', 401);
             }
-
             if ($request->hasFile('image')) {
-                $file = $request->file('image');
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $path = $file->storeAs('public/profile_images', $filename);
-                
-                // Update user's image field with the file path
-                $user->image = 'storage/profile_images/' . $filename;
-                $user->save();
-
-                return $this->success([
-                    'user' => $user,
-                    'image_path' => $user->image
-                ], 'Profile image updated successfully');
+                $image = $request->file('image');
+                $path = $image->store('profile_images', 'public');
+                // Supprimer l'ancienne image si elle existe
+                if ($user->image) {
+                    $oldImagePath = public_path("storage/{$user->image}");
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
+                    }
+                }
+                // Mettre à jour le chemin de l'image dans la base de données
+                if (User::where('id', $user->id)->update(['image' => $path])) {
+                    return $this->success([
+                        'user' => $user,
+                        'image_path' => $path
+                    ], 'Profile image updated successfully');
+                }
             }
-
             return $this->error(null, 'No image file provided', 400);
         } catch (Exception $e) {
             return $this->error(null, 'Failed to update profile image: ' . $e->getMessage(), 500);
