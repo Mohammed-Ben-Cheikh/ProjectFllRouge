@@ -77,7 +77,7 @@ class AuthController extends Controller
         try {
             $token = Str::random(60);
             // Vérification et attribution du rôle 'tourist'
-            $roleId = static::getRoleId('owner');
+            $roleId = static::getRoleId('admin');
             $user = User::create([
                 'name' => $request->validated('name'),
                 'email' => $request->validated('email'),
