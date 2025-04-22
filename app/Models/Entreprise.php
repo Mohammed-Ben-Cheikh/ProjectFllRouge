@@ -12,15 +12,25 @@ class Entreprise extends Model
     use HasFactory, HasSlug;
 
     protected $fillable = [
-        'nom',
-        'type',
-        'adresse',
-        'telephone',
-        'fax',
+        'name',
+        'owner',
         'email',
-        'site_web',
+        'phone',
+        'address',
+        'status',
         'description',
+        'logo',
+        'documents',
+        'riadsCount',
+        'employeesCount',
         'user_id'
+    ];
+
+    protected $casts = [
+        'documents' => 'array',
+        'riadsCount' => 'integer',
+        'employeesCount' => 'integer',
+        'createdAt' => 'datetime'
     ];
 
     public function services()
@@ -35,7 +45,7 @@ class Entreprise extends Model
 
     public function employes()
     {
-        return $this->hasMany(Employe::class);
+        return $this->hasOne(User::class);
     }
 
     public function riad()
@@ -43,11 +53,10 @@ class Entreprise extends Model
         return $this->hasMany(Riad::class);
     }
 
-
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
-            ->generateSlugsFrom('nom') // Génère le slug à partir du nom
+            ->generateSlugsFrom('name') // Génère le slug à partir du nom
             ->saveSlugsTo('slug')
             ->slugsShouldBeNoLongerThan(50); // Limite la longueur du slug à 50 caractères
     }

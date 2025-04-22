@@ -19,7 +19,7 @@ Route::prefix('v1')->group(function () {
 
     // Authentification
     Route::post('/login', [AuthController::class, 'login']);
-    Route::get('/user/{token}', [AuthController::class, 'getUser']);
+    Route::get('/user', [AuthController::class, 'getUser']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::get('/account/activate', [AuthController::class, 'activateAccount']);
     Route::post('/password-reset', [AuthController::class, 'sendResetLink']);
@@ -36,8 +36,8 @@ Route::prefix('v1')->group(function () {
 
             // Routes pour les entreprises
             Route::get('/entreprises', [EntrepriseController::class, 'index']);
-            Route::post('/entreprises', [EntrepriseController::class, 'store']);
-            Route::get('/admin/entreprises', [EntrepriseController::class, 'findByUser']);
+
+
             Route::get('/entreprises/{slug}', [EntrepriseController::class, 'show']);
             Route::delete('/entreprises/{slug}', [EntrepriseController::class, 'destroy']);
             Route::put('/entreprises/{slug}', [EntrepriseController::class, 'update']);
@@ -123,7 +123,9 @@ Route::prefix('v1')->group(function () {
 
         // routes protégées pour les propriétaires
         Route::middleware('role:owner')->group(function () {
-            //
+            Route::post('/entreprises', [EntrepriseController::class, 'store']);
+            Route::get('/owner/entreprises', [EntrepriseController::class, 'findByUser']);
+            // Route::get('/entreprises', [EntrepriseController::class, 'index']);
         });
 
 

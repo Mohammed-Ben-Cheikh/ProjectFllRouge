@@ -26,13 +26,10 @@ class AuthController extends Controller
     /**
      * Get the authenticated user.
      */
-    public function getUser($token)
+    public function getUser()
     {
-        if (!$token) {
-            return $this->error(null, 'Token not provided', 401);
-        }
         try {
-            $user = $this->getUserFromToken($token);
+            $user = $this->getUserFromJWT();
             if (!$user) {
                 return $this->error(null, 'Invalid token or user not found', 401);
             }
@@ -77,7 +74,7 @@ class AuthController extends Controller
         try {
             $token = Str::random(60);
             // Vérification et attribution du rôle 'tourist'
-            $roleId = static::getRoleId('admin');
+            $roleId = static::getRoleId('owner');
             $user = User::create([
                 'name' => $request->validated('name'),
                 'email' => $request->validated('email'),
@@ -141,12 +138,12 @@ class AuthController extends Controller
         $request->validate(['email' => 'required|email|exists:users,email']);
         try {
             $token = Str::random(60);
+            $user = User::where('email', $request->email)->first();
+            $user->notify(new ResetPasswordNotification($token));
             PasswordResetToken::updateOrCreate(
                 ['email' => $request->email],
                 ['token' => $token, 'created_at' => now()]
             );
-            $user = User::where('email', $request->email)->first();
-            $user->notify(new ResetPasswordNotification($token));
             return $this->success(null, 'Password reset email sent.');
         } catch (Exception $e) {
             return $this->error(null, 'Failed to send reset email: ' . $e->getMessage(), 500);

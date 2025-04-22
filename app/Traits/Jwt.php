@@ -78,14 +78,14 @@ trait Jwt
         }
     }
 
-    public function getUserFromToken($token)
+    public function getUserFromJWT()
     {
         try {
-            $user = JWTAuth::setToken($token)->authenticate();
+            $user = JWTAuth::parseToken()->authenticate();
             // dd($user); // Debug
             return $user;
         } catch (JWTException $e) {
-            return $this->error(null, 'Could not get user from token: ' . $e->getMessage(), 500);
+            return $this->error(null, 'Could not get user', 500);
         }
     }
 }

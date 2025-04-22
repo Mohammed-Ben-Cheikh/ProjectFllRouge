@@ -66,10 +66,5 @@ class EntrepriseController extends Controller
     {
         return $this->entrepriseRepository->delete($slug);
     }
-
-    public function addImage($slug, Request $request)
-    {
-        return $this->entrepriseRepository->addImage($slug, $request);
-    }
 }
 

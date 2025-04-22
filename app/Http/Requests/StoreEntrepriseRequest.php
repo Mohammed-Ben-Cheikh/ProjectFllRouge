@@ -22,14 +22,18 @@ class StoreEntrepriseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nom' => ['required', 'string', 'max:255', 'unique:entreprises,nom'],
-            'type' => ['required', 'string'],
-            'adresse' => ['required', 'string'],
-            'telephone' => ['required', 'numeric'],
-            'fax' => ['required', 'numeric'],
+            'name' => ['required', 'string', 'max:255', 'unique:entreprises,name'],
+            'owner' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email'],
-            'site_web' => ['required', 'url'],
-            'description' => ['required', 'string']
+            'phone' => ['required', 'string', 'max:20'],
+            'address' => ['required', 'string'],
+            'description' => ['required', 'string'],
+            'logo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'documents.registration' => ['required', 'string'],
+            'documents.taxId' => ['required', 'string'],
+            'documents.insurance' => ['required', 'string'],
+            'riadsCount' => ['required', 'integer', 'min:0'],
+            'employeesCount' => ['required', 'integer', 'min:0']
         ];
     }
 }

@@ -28,7 +28,10 @@ class EntrepriseRepositoryData implements EntrepriseRepository
 
     public function create(array $data)
     {
+
         $data['user_id'] = Auth::id();
+        // dd($data);
+        $data['logo'] = $data['logo']->store('entreprises', 'public');
         if ($entreprise = Entreprise::create($data)) {
             return $this->success(['entreprise' => $entreprise], 'Entreprise created successfully', 200);
         } else
@@ -66,20 +69,6 @@ class EntrepriseRepositoryData implements EntrepriseRepository
             return $this->error(null, 'No entreprises found for this user', 404);
         }
         return $this->success(['entreprises' => $entreprises], 'Entreprises retrieved successfully', 200);
-    }
-
-    public function addImage(string $slug, $data)
-    {
-        $data->validate(['image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048']);
-        if (isset($data)) {
-            $entreprise = static::entreprise($slug);
-            if (!$entreprise) {
-                return $this->error(null, 'Entreprise not found', 404);
-            }
-            $path = $data['image']->store('entreprises', 'public');
-            $entreprise->update(['image' => $path]);
-            return $this->success(['entreprise' => static::entreprise($slug)->first()],'pdated successfully', 200);
-        }
     }
 
     public static function entreprise($slug)

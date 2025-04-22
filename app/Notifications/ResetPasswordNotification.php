@@ -21,10 +21,13 @@ class ResetPasswordNotification extends Notification
 
     public function toMail($notifiable)
     {
+        // URL de réinitialisation du mot de passe
+        $activationUrl = url("http://localhost:3000/reset-password?token={$this->token}&email={$notifiable->email}");
+
         return (new MailMessage)
-            ->subject('Réinitialisation de votre mot de passe')
-            ->line('Vous recevez cet e-mail parce que nous avons reçu une demande de réinitialisation de votre mot de passe.')
-            ->action('Réinitialiser le mot de passe', url("http://localhost:3000/reset-password?token={$this->token}&email={$notifiable->email}"))
-            ->line('Si vous n\'avez pas demandé de réinitialisation, aucune action supplémentaire n\'est requise.');
+            ->subject('Réinitialisation de votre mot de passe RiadBookingNow')
+            ->view('emails.resetPassword', [
+                'activationUrl' => $activationUrl
+            ]);
     }
 }
