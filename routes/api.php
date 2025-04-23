@@ -40,7 +40,7 @@ Route::prefix('v1')->group(function () {
 
             Route::get('/entreprises/{slug}', [EntrepriseController::class, 'show']);
             Route::delete('/entreprises/{slug}', [EntrepriseController::class, 'destroy']);
-            Route::put('/entreprises/{slug}', [EntrepriseController::class, 'update']);
+            // Route::put('/entreprises/{slug}', [EntrepriseController::class, 'update']);
             Route::post('/image/entreprises/{slug}', [EntrepriseController::class, 'addImage']);
 
             // Routes pour les riads
@@ -123,9 +123,23 @@ Route::prefix('v1')->group(function () {
 
         // routes protégées pour les propriétaires
         Route::middleware('role:owner')->group(function () {
+
+            Route::get('/villes', [VilleController::class, 'index']);
+
+
             Route::post('/entreprises', [EntrepriseController::class, 'store']);
             Route::get('/owner/entreprises', [EntrepriseController::class, 'findByUser']);
-            // Route::get('/entreprises', [EntrepriseController::class, 'index']);
+            Route::get('/entreprises/{slug}', [EntrepriseController::class, 'show']);
+            Route::post('/entreprises/{slug}', [EntrepriseController::class, 'update']);
+            Route::delete('/entreprises/{slug}', [EntrepriseController::class, 'destroy']);
+
+            Route::get('/owner/riads', [RiadController::class, 'findByUser']);
+            Route::post('/riads', [RiadController::class, 'store']);
+            Route::get('/riads/{slug}', [RiadController::class, 'show']);
+            Route::put('/riads/{slug}', [RiadController::class, 'update']);
+            Route::delete('/riads/{slug}', [RiadController::class, 'destroy']);
+
+
         });
 
 

@@ -40,11 +40,24 @@ class EntrepriseRepositoryData implements EntrepriseRepository
 
     public function update($slug, array $data)
     {
-        $entreprise = static::entreprise($slug);
+        $entreprise = static::entreprise($slug)->first();
+
+        if (isset($data['logo'])) {
+            // Delete old logo
+            if ($entreprise->logo) {
+                $oldImagePath = public_path("storage/{$entreprise->logo}");
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
+            }
+            // Store new logo
+            $data['logo'] = $data['logo']->store('entreprises', 'public');
+        }
         if ($entreprise->update($data)) {
-            return $this->success(['entreprise' => static::entreprise($slug)->first()], 'Entreprise updated successfully', 200);
-        } else
+            return $this->success(['entreprise' => $entreprise], 'Entreprise updated successfully', 200);
+        } else {
             return $this->error(null, 'Failed to update entreprise');
+        }
     }
 
     public function delete(string $slug)

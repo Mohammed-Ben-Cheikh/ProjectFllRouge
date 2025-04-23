@@ -24,6 +24,11 @@ class RiadController extends Controller
         return $this->riadRepository->all();
     }
 
+    public function findByUser()
+    {
+        return $this->riadRepository->findUser();
+    }
+
     /**
      * Store a newly created resource in storage.
      */

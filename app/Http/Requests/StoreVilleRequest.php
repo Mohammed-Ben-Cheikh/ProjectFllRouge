@@ -22,7 +22,7 @@ class StoreVilleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nom' => ['required', 'string', 'max:255', 'unique:villes,nom'],
+            'city' => ['required', 'string', 'max:255', 'unique:villes,city'],
             'description' => ['required', 'string'],
             'images' => ['required', 'array', 'max:5'],
             'images.*' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],

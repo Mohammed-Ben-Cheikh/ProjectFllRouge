@@ -9,6 +9,8 @@ interface RiadRepository
 
     public function findBySlug(string $slug);
 
+    public function findUser();
+
     public function create(array $data);
 
     public function update($slug, array $data);

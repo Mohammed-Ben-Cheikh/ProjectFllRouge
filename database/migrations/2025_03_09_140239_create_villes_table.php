@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('villes', function (Blueprint $table) {
             $table->id();
-            $table->string('nom')->unique();
+            $table->string('city')->unique();
             $table->string('slug')->unique();
             $table->string('description')->nullable();
             $table->integer('total_riads')->default(0);

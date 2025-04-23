@@ -85,7 +85,7 @@ trait Jwt
             // dd($user); // Debug
             return $user;
         } catch (JWTException $e) {
-            return $this->error(null, 'Could not get user', 500);
+            return null ;
         }
     }
 }

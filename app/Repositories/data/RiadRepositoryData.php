@@ -2,12 +2,14 @@
 
 namespace App\Repositories\data;
 
+use App\Models\Entreprise;
 use App\Models\Riad;
 use App\Models\RiadImages;
 use App\Models\User;
 use App\Models\Ville;
 use App\Traits\HttpResponses;
 use App\Repositories\Contracts\RiadRepository;
+use DB;
 
 class RiadRepositoryData implements RiadRepository
 {
@@ -21,6 +23,20 @@ class RiadRepositoryData implements RiadRepository
     public function findBySlug(string $slug)
     {
         return $this->success(['riad' => static::riad($slug)->first()], 'Riad found successfully', 200);
+    }
+
+    public function findUser()
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return $this->error('', 'User not found', 404);
+        }
+        $riads = collect();
+        $entreprises = Entreprise::where('user_id', $user->id)->get();
+        foreach ($entreprises as $entreprise) {
+            $riads = $riads->merge(Riad::where('entreprise_id', $entreprise->id)->get());
+        }
+        return $this->success(['riads' => $riads], 'Riads found successfully', 200);
     }
 
     public function create(array $data)

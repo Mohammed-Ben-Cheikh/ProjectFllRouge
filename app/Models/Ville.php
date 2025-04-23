@@ -12,7 +12,7 @@ class Ville extends Model
     use HasFactory, HasSlug;
 
     protected $fillable = [
-        'nom',
+        'city',
         'image_url',
         'description'
     ];
@@ -34,7 +34,7 @@ class Ville extends Model
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
-            ->generateSlugsFrom('nom')
+            ->generateSlugsFrom('city')
             ->saveSlugsTo('slug');
     }
 }

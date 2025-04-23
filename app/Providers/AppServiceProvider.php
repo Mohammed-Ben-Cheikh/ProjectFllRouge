@@ -15,6 +15,7 @@ use App\Repositories\Contracts\ImageRepository;
 use App\Repositories\Contracts\VilleRepository;
 use App\Repositories\data\ChambreRepositoryData;
 
+use App\Repositories\data\EmployeRepositoryData;
 use App\Repositories\data\FavorisRepositoryData;
 use App\Repositories\data\ServiceRepositoryData;
 use App\Repositories\Contracts\ChambreRepository;
@@ -26,9 +27,10 @@ use App\Repositories\Contracts\PaiementRepository;
 use App\Repositories\data\EntrepriseRepositoryData;
 use App\Repositories\Contracts\EntrepriseRepository;
 use App\Repositories\data\ReservationRepositoryData;
-use App\Repositories\data\EmployeRepositoryData;
 
 use App\Repositories\Contracts\ReservationRepository;
+use App\Repositories\Data\AuthControllerRepositoryData;
+use App\Repositories\Contracts\AuthControllerRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -37,6 +39,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(AuthControllerRepository::class, AuthControllerRepositoryData::class);
         $this->app->bind(EntrepriseRepository::class, EntrepriseRepositoryData::class);
         $this->app->bind(VilleRepository::class, VilleRepositoryData::class);
         $this->app->bind(RiadRepository::class, RiadRepositoryData::class);
