@@ -60,6 +60,14 @@ class EntrepriseController extends Controller
     }
 
     /**
+     * Update the status of the specified resource in storage.
+     */
+    public function updateStatus($slug, Request $request)
+    {
+        return $this->entrepriseRepository->updateStatus($slug, $request->status);
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy($slug)

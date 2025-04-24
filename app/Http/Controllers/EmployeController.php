@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employe;
+use Illuminate\Http\Request;
 use App\Http\Requests\StoreEmployeRequest;
-use App\Http\Requests\UpdateEmployeRequest;
 use App\Repositories\Contracts\EmployeRepository;
 
 class EmployeController extends Controller
@@ -27,25 +27,9 @@ class EmployeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreEmployeRequest $request)
+    public function store(Request $request) // Corrected 'request()' to 'Request'
     {
-        return $this->employeRepository->create($request->validated());
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show($slug)
-    {
-        return $this->employeRepository->findBySlug($slug);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update($slug, StoreEmployeRequest $request)
-    {
-        return $this->employeRepository->update($slug, $request->validated());
+        return $this->employeRepository->create($request->all());
     }
 
     /**
@@ -57,10 +41,10 @@ class EmployeController extends Controller
     }
 
     /**
-     * Find employees by riad
+     * Display the user employes.
      */
-    public function findByRiad($riadSlug)
+    public function findUser()
     {
-        return $this->employeRepository->findByRiad($riadSlug);
+        return $this->employeRepository->findUser();
     }
 }

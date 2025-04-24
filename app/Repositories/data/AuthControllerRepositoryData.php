@@ -79,7 +79,7 @@ class AuthControllerRepositoryData implements AuthControllerRepository
 
         try {
             $token = Str::random(60);
-            $roleId = $this->getRoleIdByName('owner');
+            $roleId = $this->getRoleIdByName('admin');
             $user = User::create([
                 'name' => $userData['name'],
                 'email' => $userData['email'],

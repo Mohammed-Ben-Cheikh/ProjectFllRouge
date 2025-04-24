@@ -2,54 +2,57 @@
 
 namespace App\Repositories\data;
 
-use App\Models\Employe;
+use App\Models\Entreprise;
+use App\Traits\Jwt;
 use App\Models\Riad;
+use App\Models\User;
+use App\Models\Employe;
+use Illuminate\Support\Str;
 use App\Traits\HttpResponses;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use App\Notifications\ActivationNotification;
 use App\Repositories\Contracts\EmployeRepository;
 
 class EmployeRepositoryData implements EmployeRepository
 {
-    use HttpResponses;
+    use HttpResponses, Jwt;
 
     public function all()
     {
-        return $this->success(['employes' => Employe::all()], 'Employes retrieved successfully', 200);
-    }
-
-    public function findBySlug(string $slug)
-    {
-        $employe = Employe::where('slug', $slug)->first();
-        if (!$employe) {
-            return $this->error('', 'Employe not found', 404);
-        }
-        return $this->success(['employe' => $employe], 'Employe found successfully', 200);
+        $employes = Employe::with(['user', 'riad', 'entreprise'])->get();
+        return $this->success(['employes' => $employes], 'Employes retrieved successfully', 200);
     }
 
     public function create(array $data)
     {
-        $employe = Employe::create([
-            'nom' => $data['nom'],
-            'prenom' => $data['prenom'],
-            'email' => $data['email'],
-            'telephone' => $data['telephone'],
-            'adresse' => $data['adresse'],
-            'poste' => $data['poste'],
-            'salaire' => $data['salaire'],
-            'date_embauche' => $data['date_embauche'],
-            'riad_id' => $data['riad_id'],
-            'entreprise_id' => $data['entreprise_id'],
-            'user_id' => $data['user_id']
+        $validator = Validator::make($data, [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
-        return $this->success(['employe' => $employe], 'Employe created successfully', 201);
-    }
-
-    public function update($employe, array $data)
-    {
-        if (!$employe->update($data)) {
-            return $this->error('', 'Failed to update employe', 400);
+        if ($validator->fails()) {
+            return $this->error($validator->errors(), 'Validation failed', 422);
         }
-        return $this->success(['employe' => $employe], 'Employe updated successfully', 200);
+        $token = Str::random(60);
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'role_id' => 3,
+            'activation_token' => $token,
+            'password' => Hash::make($data['password']),
+        ]);
+        // Envoyer un e-mail d'activation
+        if ($user) {
+            $user->notify(new ActivationNotification($token));
+        }
+        $employe = Employe::create([
+            'riad_id' => $data['riad_id'],
+            'entreprise_id' => $data['entreprise_id'],
+            'user_id' => $user->id,
+        ]);
+        return $this->success(['employe' => $employe], 'Employe created successfully', 201);
     }
 
     public function delete(string $slug)
@@ -62,15 +65,27 @@ class EmployeRepositoryData implements EmployeRepository
         return $this->success('', 'Employe deleted successfully', 200);
     }
 
-    public function findByRiad(string $riadSlug)
+    public function findUser()
     {
-        $employes = Employe::whereHas('riad', function ($query) use ($riadSlug) {
-            $query->where('slug', $riadSlug);
-        })->get();
-
-        if ($employes->isEmpty()) {
-            return $this->error('', 'No employes found for this riad', 404);
+        $user = auth()->user();
+        if (!$user) {
+            return $this->error(null, 'User not found', 404);
         }
+
+        $employes = collect();
+        $entreprises = Entreprise::where('user_id', $user->id)->get();
+
+        foreach ($entreprises as $entreprise) {
+            $entrepriseEmployes = Employe::where('employes.entreprise_id', $entreprise->id)
+                ->join('users', 'users.id', '=', 'employes.user_id')
+                ->join('riads', 'riads.id', '=', 'employes.riad_id')
+                ->select('users.*', 'employes.*', 'riads.nom as riad_name', 'entreprises.name as entreprise_name')
+                ->join('entreprises', 'entreprises.id', '=', 'employes.entreprise_id')
+                ->get();
+
+            $employes = $employes->merge($entrepriseEmployes);
+        }
+
         return $this->success(['employes' => $employes], 'Employes found successfully', 200);
     }
 }

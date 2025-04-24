@@ -41,15 +41,18 @@ Route::prefix('v1')->group(function () {
             Route::get('/entreprises/{slug}', [EntrepriseController::class, 'show']);
             Route::delete('/entreprises/{slug}', [EntrepriseController::class, 'destroy']);
             // Route::put('/entreprises/{slug}', [EntrepriseController::class, 'update']);
+            Route::post('/entreprises/{slug}/status', [EntrepriseController::class, 'updateStatus']);
             Route::post('/image/entreprises/{slug}', [EntrepriseController::class, 'addImage']);
 
             // Routes pour les riads
-            Route::get('/riads', [RiadController::class, 'index']);
+
             Route::post('/riads', [RiadController::class, 'store']);
             Route::get('/admin/riads/{slug}', [RiadController::class, 'findByEntreprise']);
             Route::get('/riads/{slug}', [RiadController::class, 'show']);
             Route::delete('/riads/{slug}', [RiadController::class, 'destroy']);
             Route::put('/riads/{slug}', [RiadController::class, 'update']);
+            Route::get('/riads', [RiadController::class, 'index']);
+            Route::post('/riads/{slug}/status', [RiadController::class, 'updateStatus']);
 
             // Routes pour les villes
             Route::get('/villes', [VilleController::class, 'index']);
@@ -113,10 +116,8 @@ Route::prefix('v1')->group(function () {
 
             // Routes pour les emoloyes
             Route::get('/employes', [EmployeController::class, 'index']);
-            Route::post('/employes', [EmployeController::class, 'store']);
+
             Route::get('/employes/{slug}', [EmployeController::class, 'show']);
-            Route::put('/employes/{slug}', [EmployeController::class, 'update']);
-            Route::delete('/employes/{slug}', [EmployeController::class, 'destroy']);
             Route::get('/riads/{slug}/employes', [EmployeController::class, 'findByRiad']);
         });
 
@@ -124,13 +125,18 @@ Route::prefix('v1')->group(function () {
         // routes protégées pour les propriétaires
         Route::middleware('role:owner')->group(function () {
 
-            Route::get('/villes', [VilleController::class, 'index']);
+            Route::get('/owner/villes', [VilleController::class, 'index']);
 
+            Route::post('/employes', [EmployeController::class, 'store']);
+            Route::get('/owner/employes', [EmployeController::class, 'findUser']);
+            Route::put('/employes/{slug}', [EmployeController::class, 'update']);
+            Route::delete('/employes/{slug}', [EmployeController::class, 'destroy']);
 
             Route::post('/entreprises', [EntrepriseController::class, 'store']);
             Route::get('/owner/entreprises', [EntrepriseController::class, 'findByUser']);
             Route::get('/entreprises/{slug}', [EntrepriseController::class, 'show']);
             Route::post('/entreprises/{slug}', [EntrepriseController::class, 'update']);
+
             Route::delete('/entreprises/{slug}', [EntrepriseController::class, 'destroy']);
 
             Route::get('/owner/riads', [RiadController::class, 'findByUser']);

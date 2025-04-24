@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Riad;
+use Illuminate\Http\Request;
 use App\Http\Requests\StoreRiadRequest;
 use App\Http\Requests\UpdateRiadRequest;
 use App\Repositories\Contracts\RiadRepository;
@@ -67,6 +68,14 @@ class RiadController extends Controller
     public function update(StoreRiadRequest $request, $slug)
     {
         return $this->riadRepository->update($slug, $request->validated());
+    }
+
+    /**
+     * Update the status of the specified resource in storage.
+     */
+    public function updateStatus($slug, Request $request)
+    {
+        return $this->riadRepository->updateStatus($slug, $request->status);
     }
 
     /**

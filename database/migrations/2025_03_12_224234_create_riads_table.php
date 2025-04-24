@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id(); // ID unique pour chaque riad
             $table->string('nom')->unique(); // Nom du riad, unique
             $table->string('slug')->unique(); // Slug unique pour le riad
-            $table->boolean('status')->default(false); // Statut du riad, par défaut faux
+            $table->enum('status', ['approved', 'pending', 'rejected'])->default('pending');
             $table->string('adresse')->nullable(); // Adresse du riad, nullable si non fournie
             $table->string('telephone')->nullable(); // Numéro de téléphone, nullable
             $table->string('fax')->nullable(); // Numéro de fax, nullable

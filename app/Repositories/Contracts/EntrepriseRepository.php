@@ -10,4 +10,5 @@ interface EntrepriseRepository
     public function update($slug, array $data);
     public function delete(string $slug);
     public function findByUser();
+    public function updateStatus($slug, string $status);
 }

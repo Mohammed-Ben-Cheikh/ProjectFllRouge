@@ -4,6 +4,7 @@ namespace App\Repositories\data;
 
 use App\Models\Entreprise;
 use App\Traits\HttpResponses;
+use Illuminate\Support\Facades\Validator;
 use App\Repositories\Contracts\EntrepriseRepository;
 use Illuminate\Support\Facades\Auth;
 
@@ -82,6 +83,26 @@ class EntrepriseRepositoryData implements EntrepriseRepository
             return $this->error(null, 'No entreprises found for this user', 404);
         }
         return $this->success(['entreprises' => $entreprises], 'Entreprises retrieved successfully', 200);
+    }
+
+    public function updateStatus($slug, string $status)
+    {
+        $data = ['status' => $status];
+        $validator = Validator::make($data, [
+            'status' => 'required|string|in:approved,pending,rejected',
+        ]);
+        if ($validator->fails()) {
+            return $this->error($validator->errors(), 'Validation failed', 422);
+        }
+        $entreprise = static::entreprise($slug)->first();
+        if (!$entreprise) {
+            return $this->error(null, 'Entreprise not found', 404);
+        }
+        if ($entreprise->update($data)) {
+            return $this->success(['entreprise' => $entreprise], 'Entreprise status updated successfully', 200);
+        } else {
+            return $this->error(null, 'Failed to update entreprise status');
+        }
     }
 
     public static function entreprise($slug)

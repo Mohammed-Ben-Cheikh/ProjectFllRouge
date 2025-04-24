@@ -66,6 +66,7 @@ return new class extends Migration {
         Schema::table('employes', function (Blueprint $table) {
             $table->foreignId('riad_id')->nullable()->constrained('riads')->onDelete('cascade'); // Riad
             $table->foreignId('entreprise_id')->constrained('entreprises')->onDelete('cascade'); // Entreprise
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Utilisateur
         });
 
     }
@@ -133,6 +134,7 @@ return new class extends Migration {
         Schema::table('employes', function (Blueprint $table) {
             $table->dropForeign(['riad_id']);
             $table->dropForeign(['entreprise_id']);
+            $table->dropForeign(['user_id']);
         });
 
         Schema::table('paiement_services', function (Blueprint $table) {

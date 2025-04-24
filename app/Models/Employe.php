@@ -10,14 +10,7 @@ class Employe extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nom',
-        'prenom',
-        'email',
-        'telephone',
-        'adresse',
-        'poste',
-        'salaire',
-        'date_embauche',
+        'entreprise_id',
         'riad_id',
         'user_id'
     ];

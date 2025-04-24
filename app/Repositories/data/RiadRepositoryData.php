@@ -7,6 +7,8 @@ use App\Models\Riad;
 use App\Models\RiadImages;
 use App\Models\User;
 use App\Models\Ville;
+use Illuminate\Support\Facades\Validator;
+
 use App\Traits\HttpResponses;
 use App\Repositories\Contracts\RiadRepository;
 use DB;
@@ -17,7 +19,7 @@ class RiadRepositoryData implements RiadRepository
 
     public function all()
     {
-        return $this->success(['riads' => Riad::all()], 'Riads retrieved successfully', 200);
+        return $this->success(['riads' => Riad::with('images')->get()], 'Riads retrieved successfully', 200);
     }
 
     public function findBySlug(string $slug)
@@ -34,7 +36,7 @@ class RiadRepositoryData implements RiadRepository
         $riads = collect();
         $entreprises = Entreprise::where('user_id', $user->id)->get();
         foreach ($entreprises as $entreprise) {
-            $riads = $riads->merge(Riad::where('entreprise_id', $entreprise->id)->get());
+            $riads = $riads->merge(Riad::where('entreprise_id', $entreprise->id)->with('images')->get());
         }
         return $this->success(['riads' => $riads], 'Riads found successfully', 200);
     }
@@ -98,6 +100,26 @@ class RiadRepositoryData implements RiadRepository
             return $this->error('', 'No riads found for this ville', 404);
         }
         return $riads;
+    }
+
+    public function updateStatus($slug, string $status)
+    {
+        $data = ['status' => $status];
+        $validator = Validator::make($data, [
+            'status' => 'required|string|in:approved,pending,rejected',
+        ]);
+        if ($validator->fails()) {
+            return $this->error($validator->errors(), 'Validation failed', 422);
+        }
+        $riad = static::riad($slug)->first();
+        if (!$riad) {
+            return $this->error(null, 'Riad not found', 404);
+        }
+        if ($riad->update($data)) {
+            return $this->success(['riad' => $riad], 'Riad status updated successfully', 200);
+        } else {
+            return $this->error(null, 'Failed to update riad status', 400);
+        }
     }
 
     public static function riad($slug)

@@ -20,4 +20,6 @@ interface RiadRepository
     public function findByEntreprise(string $slug);
 
     public function findByVille(string $villeSlug);
+
+    public function updateStatus($slug, string $status);
 }
