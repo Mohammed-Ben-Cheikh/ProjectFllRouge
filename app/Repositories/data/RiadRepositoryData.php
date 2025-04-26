@@ -7,6 +7,7 @@ use App\Models\Riad;
 use App\Models\RiadImages;
 use App\Models\User;
 use App\Models\Ville;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 use App\Traits\HttpResponses;
@@ -19,7 +20,8 @@ class RiadRepositoryData implements RiadRepository
 
     public function all()
     {
-        return $this->success(['riads' => Riad::with('images')->get()], 'Riads retrieved successfully', 200);
+        $riads = Riad::with(['images', 'entreprise', 'ville'])->get();
+        return $this->success(['riads' => $riads], 'Riads retrieved successfully', 200);
     }
 
     public function findBySlug(string $slug)
@@ -43,7 +45,15 @@ class RiadRepositoryData implements RiadRepository
 
     public function create(array $data)
     {
+        if(!$city = Ville::where('id', $data['ville_id'])->first()->city) {
+            return $this->error('', 'City not found', 404);
+        }
+        $data['city'] = $city;
+        // return $this->error($data, 'test', 404);
         $riad = Riad::create($data);
+        if (!$riad) {
+            return $this->error('', 'Failed to create riad', 400);
+        }
         if (isset($data['images']) && is_array($data['images'])) {
             $isPrimary = true;
             foreach ($data['images'] as $imageFile) {
@@ -55,6 +65,9 @@ class RiadRepositoryData implements RiadRepository
                 ]);
                 $isPrimary = false;
             }
+        }
+        if (!$riad) {
+            return $this->error('', 'Failed to create riad', 400);
         }
         return $this->success(['riad' => $riad->load('images')], 'Riad created successfully', 200);
     }
@@ -120,6 +133,22 @@ class RiadRepositoryData implements RiadRepository
         } else {
             return $this->error(null, 'Failed to update riad status', 400);
         }
+    }
+
+    public function findByEmployee()
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return $this->error($user, 'User not found', 404);
+        }
+        if (!$user) {
+            return $this->error(null, 'User not found', 404);
+        }
+        $riads = Riad::where('id', $user->riad_id)->with('images')->get();
+        if ($riads->isEmpty()) {
+            return $this->error(null, 'No riads found for this user', 404);
+        }
+        return $this->success(['riads' => $riads], 'Riads retrieved successfully', 200);
     }
 
     public static function riad($slug)

@@ -85,4 +85,9 @@ class RiadController extends Controller
     {
         return $this->riadRepository->delete($slug);
     }
+
+    public function findByEmployee()
+    {
+        return $this->riadRepository->findByEmployee();
+    }
 }

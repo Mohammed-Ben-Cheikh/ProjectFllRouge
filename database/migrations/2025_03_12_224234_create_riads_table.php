@@ -12,17 +12,25 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('riads', function (Blueprint $table) {
-            $table->id(); // ID unique pour chaque riad
-            $table->string('nom')->unique(); // Nom du riad, unique
-            $table->string('slug')->unique(); // Slug unique pour le riad
-            $table->enum('status', ['approved', 'pending', 'rejected'])->default('pending');
-            $table->string('adresse')->nullable(); // Adresse du riad, nullable si non fournie
-            $table->string('telephone')->nullable(); // Numéro de téléphone, nullable
-            $table->string('fax')->nullable(); // Numéro de fax, nullable
-            $table->string('email')->nullable(); // Email du riad, nullable
-            $table->string('description')->nullable(); // Description du riad, nullable
-            $table->integer('total_chambres')->default(0); // Total de chambres dans le riad, avec valeur par défaut 0
-            $table->timestamps(); // Ajout des colonnes created_at et updated_at
+            $table->id();
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->string('email')->nullable();
+            $table->string('telephone')->nullable();
+            $table->string('fax')->nullable();
+            $table->string('city');
+            $table->string('address');
+            $table->text('description');
+            $table->decimal('price', 10, 2);
+            $table->decimal('rating', 3, 2)->default(0);
+            $table->integer('rooms')->default(0);
+            $table->string('owner');
+            $table->integer('reviews')->default(0);
+            $table->integer('reservations')->default(0);
+            $table->json('facilities');
+            $table->json('features');
+            $table->timestamps();
         });
     }
 

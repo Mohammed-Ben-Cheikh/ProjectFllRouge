@@ -22,4 +22,6 @@ interface RiadRepository
     public function findByVille(string $villeSlug);
 
     public function updateStatus($slug, string $status);
+
+    public function findByEmployee();
 }

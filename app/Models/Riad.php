@@ -12,16 +12,22 @@ class Riad extends Model
     use HasFactory, HasSlug;
 
     protected $fillable = [
-        'nom',
-        'description',
-        'adresse',
+        'name',
+        'status',
+        'address',
+        'email',
         'telephone',
         'fax',
-        'email',
-        'site_web',
-        'nombre_chambres',
-        'entreprise_id',
+        'description',
+        'city',
+        'price',
+        'rooms',
+        'owner',
+        'facilities',
+        'features',
         'ville_id',
+        'entreprise_id',
+        'slug'
     ];
 
     public function ville()
@@ -68,11 +74,11 @@ class Riad extends Model
     {
         return $this->hasMany(Service::class);
     }
-    
+
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
-            ->generateSlugsFrom('nom') // Génère le slug à partir du nom
+            ->generateSlugsFrom('name') // Génère le slug à partir du nom
             ->saveSlugsTo('slug')
             ->slugsShouldBeNoLongerThan(50); // Limite la longueur du slug à 50 caractères
     }

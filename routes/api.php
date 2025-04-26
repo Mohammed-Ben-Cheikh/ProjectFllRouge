@@ -132,6 +132,7 @@ Route::prefix('v1')->group(function () {
             Route::put('/employes/{slug}', [EmployeController::class, 'update']);
             Route::delete('/employes/{slug}', [EmployeController::class, 'destroy']);
 
+
             Route::post('/entreprises', [EntrepriseController::class, 'store']);
             Route::get('/owner/entreprises', [EntrepriseController::class, 'findByUser']);
             Route::get('/entreprises/{slug}', [EntrepriseController::class, 'show']);
@@ -151,6 +152,7 @@ Route::prefix('v1')->group(function () {
 
         // routes protégées pour les employés
         Route::middleware('role:employee')->group(function () {
+            Route::get('/employee/riads', [RiadController::class, 'findByEmployee']);
             //
         });
 

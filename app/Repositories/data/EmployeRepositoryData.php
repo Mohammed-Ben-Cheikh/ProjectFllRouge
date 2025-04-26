@@ -79,7 +79,7 @@ class EmployeRepositoryData implements EmployeRepository
             $entrepriseEmployes = Employe::where('employes.entreprise_id', $entreprise->id)
                 ->join('users', 'users.id', '=', 'employes.user_id')
                 ->join('riads', 'riads.id', '=', 'employes.riad_id')
-                ->select('users.*', 'employes.*', 'riads.nom as riad_name', 'entreprises.name as entreprise_name')
+                ->select('users.*', 'employes.*', 'riads.name as riad_name', 'entreprises.name as entreprise_name')
                 ->join('entreprises', 'entreprises.id', '=', 'employes.entreprise_id')
                 ->get();
 
