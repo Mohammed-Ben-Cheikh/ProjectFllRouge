@@ -2,6 +2,7 @@
 
 namespace App\Repositories\data;
 
+use App\Models\Employe;
 use App\Models\Entreprise;
 use App\Models\Riad;
 use App\Models\RiadImages;
@@ -137,18 +138,19 @@ class RiadRepositoryData implements RiadRepository
 
     public function findByEmployee()
     {
-        $user = Auth::user();
+        $user = auth()->user();
         if (!$user) {
-            return $this->error($user, 'User not found', 404);
+            return $this->error(['user_id' => $user->id], 'User not found', 404);
         }
-        if (!$user) {
-            return $this->error(null, 'User not found', 404);
+        $employee = Employe::where('user_id', $user->id)->first();
+        if (!$employee) {
+            return $this->error(['user_id' => $user->id], 'Employee not found', 404);
         }
-        $riads = Riad::where('id', $user->riad_id)->with('images')->get();
-        if ($riads->isEmpty()) {
-            return $this->error(null, 'No riads found for this user', 404);
+        $riad = Riad::where('id', $employee->riad_id)->with('images')->first();
+        if (!$riad) {
+            return $this->error(null, 'Riad not found', 404);
         }
-        return $this->success(['riads' => $riads], 'Riads retrieved successfully', 200);
+        return $this->success(['riad' => $riad], 'Riad retrieved successfully', 200);
     }
 
     public static function riad($slug)

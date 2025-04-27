@@ -22,14 +22,19 @@ class StoreChambreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nombre' => 'required|integer|max:255',
-            'description' => 'required|string',
+            'name' => 'required|string|max:255',
+            'nombre' => 'required|string|max:255',
+            'type' => 'required|string|in:standard,suite,deluxe',
             'prix' => 'required|numeric|min:0',
+            'surface' => 'required|numeric|min:1',
+            'capacity.nombre_adultes' => 'required|integer|min:1|max:10',
+            'capacity.nombre_enfants' => 'required|integer|min:0|max:10',
             'nombre_lits' => 'required|integer|min:1|max:10',
-            'nombre_personnes' => 'required|integer|min:1|max:10',
-            'surface' => 'required|decimal|min:1',
+            'equipements' => 'nullable|array',
+            'equipements.*' => 'string',
+            'statut' => 'required|string|in:available,unavailable,booked',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'riad_id' => 'required|exists:riads,id'
+            'description' => 'required|string',
         ];
     }
 }

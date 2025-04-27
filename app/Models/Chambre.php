@@ -2,20 +2,32 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+use Spatie\Sluggable\HasSlug;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Chambre extends Model
 {
-    use HasFactory;
+    use HasFactory, HasSlug;
 
     protected $fillable = [
-        'nom',
+        'name',
+        'nombre',
+        'type',
         'description',
+        'equipements',
         'prix',
-        'capacite',
-        'disponibilite',
+        'nombre_lits',
+        'capacity',
+        'surface',
+        'statut',
         'riad_id'
+    ];
+
+    protected $casts = [
+        'equipements' => 'array', // Auto-converts JSON <-> PHP array
+        'capacity' => 'array',    // If you're using JSON for capacity too
     ];
 
     public function riad()
@@ -36,5 +48,12 @@ class Chambre extends Model
     public function avis()
     {
         return $this->hasMany(AvisChambers::class);
+    }
+
+    public function getSlugOptions(): \Spatie\Sluggable\SlugOptions
+    {
+        return \Spatie\Sluggable\SlugOptions::create()
+            ->generateSlugsFrom('name')
+            ->saveSlugsTo('slug');
     }
 }

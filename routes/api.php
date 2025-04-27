@@ -152,8 +152,23 @@ Route::prefix('v1')->group(function () {
 
         // routes protégées pour les employés
         Route::middleware('role:employee')->group(function () {
+
             Route::get('/employee/riads', [RiadController::class, 'findByEmployee']);
-            //
+
+            Route::get('/employee/services', [ServiceController::class, 'findByEmployee']);
+            Route::post('/employee/services', [ServiceController::class, 'store']);
+            Route::put('/employee/services/{slug}', [ServiceController::class, 'update']);
+            Route::post('/employee/services/{slug}', [ServiceController::class, 'updateStatus']);
+            Route::delete('/employee/services/{slug}', [ServiceController::class, 'destroy']);
+
+            Route::get('/employee/chambres', [ChambreController::class, 'findByEmployee']);
+            Route::post('/employee/chambres', [ChambreController::class, 'store']);
+            Route::put('/employee/chambres/{slug}', [ChambreController::class, 'update']);
+            Route::post('/employee/chambres/{slug}', [ChambreController::class, 'updateStatus']);
+            Route::delete('/employee/chambres/{slug}', [ChambreController::class, 'destroy']);
+
+            // Route::get('/riads/{slug}/chambres', [ChambreController::class, 'findByRiad']);
+
         });
 
 

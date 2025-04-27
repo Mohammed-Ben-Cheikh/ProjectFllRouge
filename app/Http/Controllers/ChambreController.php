@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Chambre;
+use Illuminate\Http\Request;
 use App\Http\Requests\StoreChambreRequest;
 use App\Http\Requests\UpdateChambreRequest;
 use App\Repositories\Contracts\ChambreRepository;
@@ -62,5 +63,15 @@ class ChambreController extends Controller
     public function findByRiad($riadSlug)
     {
         return $this->chambreRepository->findByRiad($riadSlug);
+    }
+
+    public function findByEmployee()
+    {
+        return $this->chambreRepository->findByEmployee();
+    }
+
+    public function updateStatus($slug, Request $request)
+    {
+        return $this->chambreRepository->updateStatus($slug, $request->validated());
     }
 }

@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('services', function (Blueprint $table) {
             $table->id();
             // Basic service information
-            $table->string('nom'); // Changed from unique() as same service names might exist in different riads
+            $table->string('name'); // Changed from unique() as same service names might exist in different riads
+            $table->string('slug')->unique(); // Slug for the service, unique
             $table->text('description')->nullable();
             $table->decimal('prix', 10, 2)->nullable(); // Changed to decimal for better monetary precision
             $table->integer('duree_minutes')->nullable(); // More specific field name
