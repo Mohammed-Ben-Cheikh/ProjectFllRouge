@@ -59,8 +59,8 @@ class ServiceController extends Controller
     /**
      * Find services by entreprise
      */
-    public function findByEntreprise($entrepriseSlug)
+    public function findByEmployee()
     {
-        return $this->serviceRepository->findByEntreprise($entrepriseSlug);
+        return $this->serviceRepository->findByEmployee();
     }
 }
