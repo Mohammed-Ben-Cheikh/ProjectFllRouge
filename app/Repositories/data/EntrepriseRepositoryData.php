@@ -53,6 +53,7 @@ class EntrepriseRepositoryData implements EntrepriseRepository
             }
             // Store new logo
             $data['logo'] = $data['logo']->store('entreprises', 'public');
+            $data['status'] = 'pending';
         }
         if ($entreprise->update($data)) {
             return $this->success(['entreprise' => $entreprise], 'Entreprise updated successfully', 200);

@@ -22,11 +22,21 @@ class StoreServiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nom' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'description' => 'required|string',
             'prix' => 'required|numeric|min:0',
-            'entreprise_id' => 'required|exists:entreprises,id',
-            'disponibilite' => 'boolean',
+            'duree_minutes' => 'required|integer|min:1',
+            'type' => 'required|string',
+            'categorie' => 'required|string',
+            'unite_mesure' => 'required|string',
+            'capacite_max' => 'required|integer|min:1',
+            'reservation_requise' => 'required|boolean',
+            'heure_ouverture' => 'required|date_format:H:i',
+            'heure_fermeture' => 'required|date_format:H:i|after:heure_ouverture',
+            'jours_disponibles' => 'required|json',
+            'jours_disponibles.*' => 'string|in:lundi,mardi,mercredi,jeudi,vendredi,samedi,dimanche',
+            'statut' => 'required|string|in:available,unavailable,seasonal,pending',
+            'images' => 'nullable|array|max:10',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ];
     }

@@ -10,11 +10,25 @@ class Service extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nom',
+        'name',
         'description',
         'prix',
-        'entreprise_id',
-        'disponibilite'
+        'duree_minutes',
+        'type',
+        'categorie',
+        'unite_mesure',
+        'capacite_max',
+        'reservation_requise',
+        'heure_ouverture',
+        'heure_fermeture',
+        'jours_disponibles',
+        'statut',
+        'riad_id',
+    ];
+
+    protected $casts = [
+        'jours_disponibles' => 'array', // Auto-converts JSON <-> PHP array
+        'capacity' => 'array',    // If you're using JSON for capacity too
     ];
 
     public function entreprise()

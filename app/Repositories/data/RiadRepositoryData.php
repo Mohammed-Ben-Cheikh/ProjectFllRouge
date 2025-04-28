@@ -2,8 +2,10 @@
 
 namespace App\Repositories\data;
 
+use App\Models\Chambre;
 use App\Models\Employe;
 use App\Models\Entreprise;
+use App\Models\Reservation;
 use App\Models\Riad;
 use App\Models\RiadImages;
 use App\Models\User;
@@ -46,7 +48,7 @@ class RiadRepositoryData implements RiadRepository
 
     public function create(array $data)
     {
-        if(!$city = Ville::where('id', $data['ville_id'])->first()->city) {
+        if (!$city = Ville::where('id', $data['ville_id'])->first()->city) {
             return $this->error('', 'City not found', 404);
         }
         $data['city'] = $city;
@@ -85,10 +87,12 @@ class RiadRepositoryData implements RiadRepository
     public function delete(string $slug)
     {
         $riad = static::riad($slug)->first();
+        if (static::hasReservation($riad->id))
+            return $this->success(['riad' => $riad] , 'riad has riservations you can\'t deleted',200);
         if (!$riad) {
             return $this->error('', 'Riad not found', 404);
         }
-        $riad->update(['destroy' => true]);
+        $riad->delete();
         return $this->success(['riad' => $riad], 'Riad deleted successfully', 200);
     }
 
@@ -151,6 +155,18 @@ class RiadRepositoryData implements RiadRepository
             return $this->error(null, 'Riad not found', 404);
         }
         return $this->success(['riad' => $riad], 'Riad retrieved successfully', 200);
+    }
+
+    public static function hasReservation($riad_id)
+    {
+        $chambers = Chambre::where('riad_id', '=', $riad_id)->get();
+        foreach ($chambers as $chamber) {
+            $reservation = Reservation::where('chambre_id', '=', $chamber->id)->first();
+            if ($reservation) {
+                return true;
+            } else
+                return false;
+        }
     }
 
     public static function riad($slug)

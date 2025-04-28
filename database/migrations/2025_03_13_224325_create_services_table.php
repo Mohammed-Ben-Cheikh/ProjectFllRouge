@@ -25,7 +25,7 @@ return new class extends Migration
             // Service details
             $table->string('unite_mesure')->nullable(); // e.g., 'per person', 'per session', 'per hour'
             $table->integer('capacite_max')->nullable(); // Maximum people that can book this service
-            $table->boolean('reservation_requise')->default(false);
+            $table->boolean('reservation_requise');
             $table->time('heure_ouverture')->nullable();
             $table->time('heure_fermeture')->nullable();
             $table->json('jours_disponibles')->nullable(); // Days of week available as JSON array

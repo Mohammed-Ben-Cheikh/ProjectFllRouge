@@ -11,7 +11,8 @@ class ServiceImages extends Model
 
     protected $fillable = [
         'service_id',
-        'image_path'
+        'image_url',
+        'is_primary',
     ];
 
     public function service()

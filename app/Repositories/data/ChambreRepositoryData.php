@@ -15,7 +15,7 @@ class ChambreRepositoryData implements ChambreRepository
 
     public function all()
     {
-        return $this->success(['chambres' => Chambre::all()], 'Chambres retrieved successfully', 200);
+        return $this->success(['chambres' => Chambre::with('images')->get()], 'Chambres retrieved successfully', 200);
     }
 
     public function findBySlug(string $slug)
@@ -43,7 +43,6 @@ class ChambreRepositoryData implements ChambreRepository
                         'image_url' => $path,
                         'is_primary' => $isPrimary
                     ]);
-
                     $isPrimary = false;
                 }
             }
@@ -88,7 +87,7 @@ class ChambreRepositoryData implements ChambreRepository
         if ($chambres->isEmpty()) {
             return $this->error(['chambres' => $chambres], 'No chambres found for this employee', 404);
         }
-        return $this->success(['chambres' => $chambres], 'Chambres found successfully', 200);
+        return $this->success(['chambres' => $chambres->load('images')], 'Chambres found successfully', 200);
     }
 
     static function employe($data)
