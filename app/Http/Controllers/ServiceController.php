@@ -63,4 +63,20 @@ class ServiceController extends Controller
     {
         return $this->serviceRepository->findByEmployee();
     }
+
+    /**
+     * Find services by riad
+     */
+    public function findByRiad($riadSlug)
+    {
+        return $this->serviceRepository->findByRiad($riadSlug);
+    }
+
+    /**
+     * Find services by ville
+     */
+    public function findByVille($villeSlug)
+    {
+        return $this->serviceRepository->findByVille($villeSlug);
+    }
 }

@@ -29,7 +29,7 @@ class RiadRepositoryData implements RiadRepository
 
     public function findBySlug(string $slug)
     {
-        return $this->success(['riad' => static::riad($slug)->first()], 'Riad found successfully', 200);
+        return $this->success(['riad' => static::riad($slug)->first()->load('images')], 'Riad found successfully', 200);
     }
 
     public function findUser()
@@ -117,7 +117,7 @@ class RiadRepositoryData implements RiadRepository
         if ($riads->isEmpty()) {
             return $this->error('', 'No riads found for this ville', 404);
         }
-        return $riads;
+        return $this->success(['riads' => $riads->load('images')], 'Riads found successfully', 200);
     }
 
     public function updateStatus($slug, string $status)

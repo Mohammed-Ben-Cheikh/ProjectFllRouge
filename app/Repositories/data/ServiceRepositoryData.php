@@ -21,7 +21,11 @@ class ServiceRepositoryData implements ServiceRepository
 
     public function findBySlug(string $slug)
     {
-        return Service::where('slug', $slug)->first();
+        $service = Service::where('slug', $slug)->first();
+        if (!$service) {
+            return $this->error('', 'Service not found', 404);
+        }
+        return $this->success(['service' => Service::where('slug', $slug)->first()->load('images')], 'Service found successfully', 200);
     }
 
     public function create(array $data)
@@ -68,6 +72,34 @@ class ServiceRepositoryData implements ServiceRepository
 
         if ($services->isEmpty()) {
             return $this->error('', 'No services found for this employee', 404);
+        }
+        return $this->success(['services' => $services->load('images')], 'Services found successfully', 200);
+    }
+
+    public function findByRiad(string $slug)
+    {
+        $riad = Riad::where('slug', $slug)->first();
+        if (!$riad) {
+            return $this->error('', 'Riad not found', 404);
+        }
+        $services = Service::where('riad_id', $riad->id)->get();
+        if ($services->isEmpty()) {
+            return $this->error('', 'No services found for this riad', 404);
+        }
+        return $this->success(['services' => $services->load('images')], 'Services found successfully', 200);
+    }
+
+    public function findByVille(string $slug)
+    {
+        $riads = Riad::whereHas('ville', function ($query) use ($slug) {
+            $query->where('slug', $slug);
+        })->get();
+        if ($riads->isEmpty()) {
+            return $this->error('', 'No riads found for this ville', 404);
+        }
+        $services = Service::whereIn('riad_id', $riads->pluck('id'))->get();
+        if ($services->isEmpty()) {
+            return $this->error('', 'No services found for this ville', 404);
         }
         return $this->success(['services' => $services->load('images')], 'Services found successfully', 200);
     }

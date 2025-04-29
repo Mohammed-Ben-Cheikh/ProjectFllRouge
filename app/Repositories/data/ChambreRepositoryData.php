@@ -20,7 +20,7 @@ class ChambreRepositoryData implements ChambreRepository
 
     public function findBySlug(string $slug)
     {
-        $chambre = Chambre::where('slug', $slug)->first();
+        $chambre = Chambre::where('slug', $slug)->first()->load('images');
         if (!$chambre) {
             return $this->error('', 'Chambre not found', 404);
         }
@@ -78,7 +78,7 @@ class ChambreRepositoryData implements ChambreRepository
         if ($chambres->isEmpty()) {
             return $this->error('', 'No chambres found for this riad', 404);
         }
-        return $this->success(['chambres' => $chambres], 'Chambres found successfully', 200);
+        return $this->success(['chambres' => $chambres->load('images')], 'Chambres found successfully', 200);
     }
 
     public function findByEmployee()

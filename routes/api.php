@@ -25,6 +25,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/password-reset', [AuthController::class, 'sendResetLink']);
     Route::post('/password-reset/confirm', [AuthController::class, 'resetPassword']);
 
+    // Routes sécurisées
     Route::middleware('auth:api')->group(function () {
 
         // Déconnexion
@@ -165,11 +166,29 @@ Route::prefix('v1')->group(function () {
 
         });
 
-
         // routes protégées pour les touristes
         Route::middleware('role:tourist')->group(function () {
-            //
+
         });
     });
 
+    // Routes publiques
+    Route::get('/riads', [RiadController::class, 'index']);
+    Route::get('/riads/{slug}', [RiadController::class, 'show']);
+    Route::get('/riads/{slug}/avis', [AvisController::class, 'findByRiad']);
+    Route::get('/riads/images', [RiadController::class, 'findByRiad']);
+
+    Route::get('/villes', [VilleController::class, 'index']);
+    Route::get('/villes/{slug}', [VilleController::class, 'show']);
+    Route::get('/villes/{slug}/avis', [AvisController::class, 'findByRiad']);
+    Route::get('/villes/{slug}/riads', [RiadController::class, 'findByVille']);
+    Route::get('/villes/{slug}/services', [ServiceController::class, 'findByVille']);
+
+    Route::get('/riads/{slug}/services', [ServiceController::class, 'findByRiad']);
+    Route::get('/services/{slug}', [ServiceController::class, 'show']);
+    Route::get('/services/{slug}/avis', [AvisController::class, 'findByService']);
+
+    Route::get('/riads/{slug}/chambres', [ChambreController::class, 'findByRiad']);
+    Route::get('/chambres/{slug}', [ChambreController::class, 'show']);
+    Route::get('/chambres/{slug}/avis', [AvisController::class, 'findByChambre']);
 });
