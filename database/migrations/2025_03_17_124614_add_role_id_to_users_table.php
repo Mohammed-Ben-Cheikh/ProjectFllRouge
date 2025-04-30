@@ -9,12 +9,6 @@ return new class extends Migration {
     {
         Schema::table('users', function (Blueprint $table) {
             $table->foreignId('role_id')->constrained()->onDelete('cascade');
-            $table->boolean('activated')->default(false);
-            $table->string('activation_token')->nullable();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
-            $table->timestamps();
         });
     }
 

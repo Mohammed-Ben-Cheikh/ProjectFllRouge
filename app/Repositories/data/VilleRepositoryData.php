@@ -15,7 +15,10 @@ class VilleRepositoryData implements VilleRepository
 
     public function all()
     {
-        return $this->success(['villes' => Ville::with('images')->get()], 'Villes retrieved successfully', 200);
+        $villes = Ville::with('images')
+            ->orderBy('total_riads', 'desc')
+            ->get();
+        return $this->success(['villes' => $villes], 'Villes retrieved successfully', 200);
     }
 
     public function findBySlug(string $slug)

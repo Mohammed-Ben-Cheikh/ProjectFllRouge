@@ -32,6 +32,7 @@ class ChambreRepositoryData implements ChambreRepository
         // return $this->error($data, 'Chambre not found', 404);
         $data['equipements'] = json_encode($data['equipements']);
         $data['riad_id'] = static::employe('riad')->id;
+        $data['city'] = static::employe('riad')->city;
         $chambre = Chambre::create($data);
         if ($chambre) {
             if (isset($data['images']) && is_array($data['images'])) {

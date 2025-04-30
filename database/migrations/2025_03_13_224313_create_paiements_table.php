@@ -14,8 +14,6 @@ return new class extends Migration
         Schema::create('paiements', function (Blueprint $table) {
             $table->id();
             $table->decimal('montant', 8, 2)->nullable();
-            $table->enum('mode_paiement', ['carte', 'paypal', 'espece', 'virement'])->nullable(); // Mode de paiement utilisé
-            $table->enum('statut', ['en_attente', 'confirme', 'annule'])->default('en_attente'); // Statut du paiement
             $table->timestamps();
         });
     }

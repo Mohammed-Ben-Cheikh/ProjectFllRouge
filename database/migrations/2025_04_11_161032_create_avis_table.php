@@ -18,7 +18,6 @@ return new class extends Migration
             $table->integer('note')->nullable(); // Note de l'avis
             $table->text('commentaire')->nullable(); // Commentaire de l'avis
             $table->enum('statut', ['en_attente', 'publie', 'refuse'])->default('en_attente'); // Statut de l'avis
-            $table->boolean('anonyme')->default(false); // Indique si l'avis est anonyme
             $table->timestamps();
         });
 
@@ -29,7 +28,6 @@ return new class extends Migration
             $table->integer('note')->nullable(); // Note de l'avis
             $table->text('commentaire')->nullable(); // Commentaire de l'avis
             $table->enum('statut', ['en_attente', 'publie', 'refuse'])->default('en_attente'); // Statut de l'avis
-            $table->boolean('anonyme')->default(false); // Indique si l'avis est anonyme
             $table->timestamps();
         });
 
@@ -40,7 +38,6 @@ return new class extends Migration
             $table->integer('note')->nullable(); // Note de l'avis
             $table->text('commentaire')->nullable(); // Commentaire de l'avis
             $table->enum('statut', ['en_attente', 'publie', 'refuse'])->default('en_attente'); // Statut de l'avis
-            $table->boolean('anonyme')->default(false); // Indique si l'avis est anonyme
             $table->timestamps();
         });
     }

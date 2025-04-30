@@ -23,13 +23,17 @@ class RiadRepositoryData implements RiadRepository
 
     public function all()
     {
-        $riads = Riad::with(['images', 'entreprise', 'ville'])->get();
+        $riads = Riad::with(['images'])->get();
         return $this->success(['riads' => $riads], 'Riads retrieved successfully', 200);
     }
 
     public function findBySlug(string $slug)
     {
-        return $this->success(['riad' => static::riad($slug)->first()->load('images')], 'Riad found successfully', 200);
+        $riad = static::riad($slug)->first();
+        if (!$riad) {
+            return $this->error('', 'Riad not found', 404);
+        }
+        return $this->success(['riad' => $riad], 'Riad found successfully', 200);
     }
 
     public function findUser()
@@ -169,8 +173,13 @@ class RiadRepositoryData implements RiadRepository
         }
     }
 
+    public function images()
+    {
+        return $this->success(['images' => DB::table('riad_images')->get()], 'Riad images retrieved successfully', 200);
+    }
+
     public static function riad($slug)
     {
-        return Riad::where('slug', $slug);
+        return Riad::where('slug', $slug)->with('images');
     }
 }

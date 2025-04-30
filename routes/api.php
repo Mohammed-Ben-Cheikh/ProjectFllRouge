@@ -25,6 +25,28 @@ Route::prefix('v1')->group(function () {
     Route::post('/password-reset', [AuthController::class, 'sendResetLink']);
     Route::post('/password-reset/confirm', [AuthController::class, 'resetPassword']);
 
+    // Routes publiques
+    Route::get('/riads', [RiadController::class, 'index']);
+    Route::get('/riads/images', [RiadController::class, 'images']);
+    Route::get('/riads/{slug}', [RiadController::class, 'show']);
+    Route::get('/riads/{slug}/avis', [AvisController::class, 'findByRiad']);
+    Route::get('/riads/{slug}/services', [ServiceController::class, 'findByRiad']);
+
+    Route::get('/villes', [VilleController::class, 'index']);
+    Route::get('/villes/{slug}', [VilleController::class, 'show']);
+    Route::get('/villes/{slug}/avis', [AvisController::class, 'findByVille']);
+    Route::get('/villes/{slug}/riads', [RiadController::class, 'findByVille']);
+    Route::get('/villes/{slug}/services', [ServiceController::class, 'findByVille']);
+
+    Route::get('/services', [ServiceController::class, 'index']);
+    Route::get('/services/{slug}', [ServiceController::class, 'show']);
+    Route::get('/services/{slug}/avis', [AvisController::class, 'findByService']);
+
+    Route::get('/chambres', [ChambreController::class, 'index']);
+    Route::get('/riads/{slug}/chambres', [ChambreController::class, 'findByRiad']);
+    Route::get('/chambres/{slug}', [ChambreController::class, 'show']);
+    Route::get('/chambres/{slug}/avis', [AvisController::class, 'findByChambre']);
+
     // Routes sécurisées
     Route::middleware('auth:api')->group(function () {
 
@@ -32,163 +54,93 @@ Route::prefix('v1')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::post('image', [AuthController::class, 'updateImage']);
 
-        // Routes protégées pour les administrateurs
-        Route::middleware('role:admin')->group(function () {
-
+        // // Routes protégées pour les administrateurs
+        Route::middleware('role:admin')->prefix('admin')->group(function () {
             // Routes pour les entreprises
             Route::get('/entreprises', [EntrepriseController::class, 'index']);
-
-
-            Route::get('/entreprises/{slug}', [EntrepriseController::class, 'show']);
             Route::delete('/entreprises/{slug}', [EntrepriseController::class, 'destroy']);
-            // Route::put('/entreprises/{slug}', [EntrepriseController::class, 'update']);
             Route::post('/entreprises/{slug}/status', [EntrepriseController::class, 'updateStatus']);
-            Route::post('/image/entreprises/{slug}', [EntrepriseController::class, 'addImage']);
 
             // Routes pour les riads
-
-            Route::post('/riads', [RiadController::class, 'store']);
-            Route::get('/admin/riads/{slug}', [RiadController::class, 'findByEntreprise']);
-            Route::get('/riads/{slug}', [RiadController::class, 'show']);
-            Route::delete('/riads/{slug}', [RiadController::class, 'destroy']);
-            Route::put('/riads/{slug}', [RiadController::class, 'update']);
             Route::get('/riads', [RiadController::class, 'index']);
+            Route::delete('/riads/{slug}', [RiadController::class, 'destroy']);
             Route::post('/riads/{slug}/status', [RiadController::class, 'updateStatus']);
 
             // Routes pour les villes
             Route::get('/villes', [VilleController::class, 'index']);
             Route::post('/villes', [VilleController::class, 'store']);
-            Route::get('/villes/{slug}', [VilleController::class, 'show']);
-            Route::delete('/villes/{slug}', [VilleController::class, 'destroy']);
             Route::put('/villes/{slug}', [VilleController::class, 'update']);
+            Route::delete('/villes/{slug}', [VilleController::class, 'destroy']);
 
-            // Routes pour les paiements
-            Route::get('/paiements', [PaiementController::class, 'index']);
-            Route::post('/paiements', [PaiementController::class, 'store']);
-            Route::get('/paiements/{slug}', [PaiementController::class, 'show']);
-            Route::put('/paiements/{slug}', [PaiementController::class, 'update']);
-            Route::delete('/paiements/{slug}', [PaiementController::class, 'destroy']);
-            Route::get('/reservations/{slug}/paiements', [PaiementController::class, 'findByReservation']);
-            Route::get('/users/{slug}/paiements', [PaiementController::class, 'findByUser']);
-
-            // Routes pour les réservations
-            Route::get('/reservations', [ReservationController::class, 'index']);
-            Route::post('/reservations', [ReservationController::class, 'store']);
-            Route::get('/reservations/{slug}', [ReservationController::class, 'show']);
-            Route::put('/reservations/{slug}', [ReservationController::class, 'update']);
-            Route::delete('/reservations/{slug}', [ReservationController::class, 'destroy']);
-            Route::get('/users/{slug}/reservations', [ReservationController::class, 'findByUser']);
-            Route::get('/chambres/{slug}/reservations', [ReservationController::class, 'findByChambre']);
-            Route::get('/reservations/status/{status}', [ReservationController::class, 'findByStatus']);
-
-            // Routes pour les chambres
-            Route::get('/chambres', [ChambreController::class, 'index']);
-            Route::post('/chambres', [ChambreController::class, 'store']);
-            Route::get('/chambres/{slug}', [ChambreController::class, 'show']);
-            Route::put('/chambres/{slug}', [ChambreController::class, 'update']);
-            Route::delete('/chambres/{slug}', [ChambreController::class, 'destroy']);
-            Route::get('/riads/{slug}/chambres', [ChambreController::class, 'findByRiad']);
-
-            // Routes pour les avis
-            Route::get('/avis', [AvisController::class, 'index']);
-            Route::post('/avis', [AvisController::class, 'store']);
-            Route::get('/avis/{slug}', [AvisController::class, 'show']);
-            Route::put('/avis/{slug}', [AvisController::class, 'update']);
+            // Routes pour les avis des villes
+            Route::get('/avis', [AvisController::class, 'indexVilles']);
             Route::delete('/avis/{slug}', [AvisController::class, 'destroy']);
-            Route::get('/riads/{slug}/avis', [AvisController::class, 'findByRiad']);
-            Route::get('/chambres/{slug}/avis', [AvisController::class, 'findByChambre']);
-            Route::get('/services/{slug}/avis', [AvisController::class, 'findByService']);
-
-            // Routes pour les favoris
-            Route::get('/favoris', [FavorisController::class, 'index']);
-            Route::post('/favoris', [FavorisController::class, 'store']);
-            Route::get('/favoris/{slug}', [FavorisController::class, 'show']);
-            Route::delete('/favoris/{slug}', [FavorisController::class, 'destroy']);
-            Route::get('/users/{slug}/favoris', [FavorisController::class, 'findByUser']);
-            Route::get('/riads/{slug}/favoris', [FavorisController::class, 'findByRiad']);
-
-            // Routes pour les services
-            Route::get('/services', [ServiceController::class, 'index']);
-            Route::post('/services', [ServiceController::class, 'store']);
-            Route::get('/services/{slug}', [ServiceController::class, 'show']);
-            Route::put('/services/{slug}', [ServiceController::class, 'update']);
-            Route::delete('/services/{slug}', [ServiceController::class, 'destroy']);
-            Route::get('/entreprises/{slug}/services', [ServiceController::class, 'findByEntreprise']);
-
-            // Routes pour les emoloyes
-            Route::get('/employes', [EmployeController::class, 'index']);
-
-            Route::get('/employes/{slug}', [EmployeController::class, 'show']);
-            Route::get('/riads/{slug}/employes', [EmployeController::class, 'findByRiad']);
+            Route::post('/avis/{id}/status/{status}', [AvisController::class, 'updateStatus']);
         });
 
-
         // routes protégées pour les propriétaires
-        Route::middleware('role:owner')->group(function () {
-
-            Route::get('/owner/villes', [VilleController::class, 'index']);
+        Route::middleware('role:owner')->prefix('owner')->group(function () {
+            Route::get('/villes', [VilleController::class, 'index']);
 
             Route::post('/employes', [EmployeController::class, 'store']);
-            Route::get('/owner/employes', [EmployeController::class, 'findUser']);
+            Route::get('/employes', [EmployeController::class, 'findUser']);
             Route::put('/employes/{slug}', [EmployeController::class, 'update']);
             Route::delete('/employes/{slug}', [EmployeController::class, 'destroy']);
 
             Route::post('/entreprises', [EntrepriseController::class, 'store']);
-            Route::get('/owner/entreprises', [EntrepriseController::class, 'findByUser']);
+            Route::get('/entreprises', [EntrepriseController::class, 'findByUser']);
             Route::post('/entreprises/{slug}', [EntrepriseController::class, 'update']);
             Route::delete('/entreprises/{slug}', [EntrepriseController::class, 'destroy']);
 
-            Route::get('/owner/riads', [RiadController::class, 'findByUser']);
-            Route::post('/owner/riads', [RiadController::class, 'store']);
-            Route::put('/owner/riads/{slug}', [RiadController::class, 'update']);
-            Route::delete('/owner/riads/{slug}', [RiadController::class, 'destroy']);
+            Route::get('/riads', [RiadController::class, 'findByUser']);
+            Route::post('/riads', [RiadController::class, 'store']);
+            Route::put('/riads/{slug}', [RiadController::class, 'update']);
+            Route::delete('/riads/{slug}', [RiadController::class, 'destroy']);
         });
 
 
         // routes protégées pour les employés
-        Route::middleware('role:employee')->group(function () {
+        Route::middleware('role:employee')->prefix('employee')->group(function () {
+            Route::get('/riads', [RiadController::class, 'findByEmployee']);
 
-            Route::get('/employee/riads', [RiadController::class, 'findByEmployee']);
+            Route::get('/services', [ServiceController::class, 'findByEmployee']);
+            Route::post('/services', [ServiceController::class, 'store']);
+            Route::put('/services/{slug}', [ServiceController::class, 'update']);
+            Route::post('/services/{slug}', [ServiceController::class, 'updateStatus']);
+            Route::delete('/services/{slug}', [ServiceController::class, 'destroy']);
 
-            Route::get('/employee/services', [ServiceController::class, 'findByEmployee']);
-            Route::post('/employee/services', [ServiceController::class, 'store']);
-            Route::put('/employee/services/{slug}', [ServiceController::class, 'update']);
-            Route::post('/employee/services/{slug}', [ServiceController::class, 'updateStatus']);
-            Route::delete('/employee/services/{slug}', [ServiceController::class, 'destroy']);
+            Route::get('/chambres', [ChambreController::class, 'findByEmployee']);
+            Route::post('/chambres', [ChambreController::class, 'store']);
+            Route::put('/chambres/{slug}', [ChambreController::class, 'update']);
+            Route::post('/chambres/{slug}', [ChambreController::class, 'updateStatus']);
+            Route::delete('/chambres/{slug}', [ChambreController::class, 'destroy']);
 
-            Route::get('/employee/chambres', [ChambreController::class, 'findByEmployee']);
-            Route::post('/employee/chambres', [ChambreController::class, 'store']);
-            Route::put('/employee/chambres/{slug}', [ChambreController::class, 'update']);
-            Route::post('/employee/chambres/{slug}', [ChambreController::class, 'updateStatus']);
-            Route::delete('/employee/chambres/{slug}', [ChambreController::class, 'destroy']);
-
-            // Route::get('/riads/{slug}/chambres', [ChambreController::class, 'findByRiad']);
-
+            Route::get('/reservations', [ReservationController::class, 'findByRiad']);
+            Route::post('/reservations/{slug}', [ChambreController::class, 'updateStatus']);
         });
 
         // routes protégées pour les touristes
-        Route::middleware('role:tourist')->group(function () {
+        Route::middleware('role:tourist')->prefix('tourist')->group(function () {
+            // Routes pour les réservations
+            Route::post('/reservations', [ReservationController::class, 'store']);
+            Route::put('/reservations/{slug}', [ReservationController::class, 'update']);
+            Route::delete('/reservations/{slug}', [ReservationController::class, 'destroy']);
+            Route::get('/users/{slug}/reservations', [ReservationController::class, 'findByUser']);
+            Route::get('/chambres/{slug}/reservations', [ReservationController::class, 'findByChambre']);
 
+            // // Routes pour les paiements
+            // Route::get('/paiements', [PaiementController::class, 'index']);
+            // Route::post('/paiements', [PaiementController::class, 'store']);
+            // Route::get('/paiements/{slug}', [PaiementController::class, 'show']);
+            // Route::put('/paiements/{slug}', [PaiementController::class, 'update']);
+            // Route::delete('/paiements/{slug}', [PaiementController::class, 'destroy']);
+            // Route::get('/reservations/{slug}/paiements', [PaiementController::class, 'findByReservation']);
+            // Route::get('/users/{slug}/paiements', [PaiementController::class, 'findByUser']);
+
+            // Routes pour les favoris
+            Route::post('/favoris', [FavorisController::class, 'store']);
+            Route::delete('/favoris/{slug}', [FavorisController::class, 'destroy']);
+            Route::get('/users/{username}/favoris', [FavorisController::class, 'findByUser']);
         });
     });
-
-    // Routes publiques
-    Route::get('/riads', [RiadController::class, 'index']);
-    Route::get('/riads/{slug}', [RiadController::class, 'show']);
-    Route::get('/riads/{slug}/avis', [AvisController::class, 'findByRiad']);
-    Route::get('/riads/images', [RiadController::class, 'findByRiad']);
-
-    Route::get('/villes', [VilleController::class, 'index']);
-    Route::get('/villes/{slug}', [VilleController::class, 'show']);
-    Route::get('/villes/{slug}/avis', [AvisController::class, 'findByRiad']);
-    Route::get('/villes/{slug}/riads', [RiadController::class, 'findByVille']);
-    Route::get('/villes/{slug}/services', [ServiceController::class, 'findByVille']);
-
-    Route::get('/riads/{slug}/services', [ServiceController::class, 'findByRiad']);
-    Route::get('/services/{slug}', [ServiceController::class, 'show']);
-    Route::get('/services/{slug}/avis', [AvisController::class, 'findByService']);
-
-    Route::get('/riads/{slug}/chambres', [ChambreController::class, 'findByRiad']);
-    Route::get('/chambres/{slug}', [ChambreController::class, 'show']);
-    Route::get('/chambres/{slug}/avis', [AvisController::class, 'findByChambre']);
 });

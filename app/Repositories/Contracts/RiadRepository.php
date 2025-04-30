@@ -24,4 +24,6 @@ interface RiadRepository
     public function updateStatus($slug, string $status);
 
     public function findByEmployee();
+
+    public function images();
 }

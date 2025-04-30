@@ -90,4 +90,9 @@ class RiadController extends Controller
     {
         return $this->riadRepository->findByEmployee();
     }
+
+    public function images()
+    {
+        return $this->riadRepository->images();
+    }
 }

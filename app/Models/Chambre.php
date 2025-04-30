@@ -13,6 +13,7 @@ class Chambre extends Model
 
     protected $fillable = [
         'name',
+        'city',
         'nombre',
         'type',
         'description',

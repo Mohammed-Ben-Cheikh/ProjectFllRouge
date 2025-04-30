@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name'); // Nom de la chambre
             $table->string('slug')->unique(); // Slug de la chambre, unique
             $table->string('nombre'); // Nom de la chambre, unique
+            $table->string('city'); // Ville de la chambre
             $table->enum('type', ['standard', 'deluxe', 'suite']); // Type de la chambre,
             $table->string('description')->nullable(); // Description de la chambre, nullable
             $table->json('equipements')->nullable(); // Equipements de la chambre, nullable
