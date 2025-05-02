@@ -2,6 +2,7 @@
 
 namespace App\Repositories\data;
 
+use App\Models\Chambre;
 use App\Models\Reservation;
 use App\Traits\HttpResponses;
 use App\Repositories\Contracts\ReservationRepository;
@@ -22,7 +23,10 @@ class ReservationRepositoryData implements ReservationRepository
 
     public function create(array $data)
     {
-        return Reservation::create($data);
+        $data['user_id'] = auth()->user()->id;
+        $data['invoice'] = 'INV-' . strtoupper(uniqid());
+        $reservation = Reservation::create($data);
+        return $this->success(['reservation' => $reservation], 'Reservation created successfully', 201);
     }
 
     public function update($reservation, array $data)
@@ -41,16 +45,28 @@ class ReservationRepositoryData implements ReservationRepository
         return $this->success('', 'Reservation deleted successfully', 200);
     }
 
-    public function findByUser(string $userSlug)
+    public function findByUser()
     {
-        $reservations = Reservation::whereHas('user', function($query) use ($userSlug) {
-            $query->where('slug', $userSlug);
-        })->get();
+        $reservations = Reservation::where('user_id', auth()->user()->id)
+            ->with(['chambre' => function($query) {
+            $query->with('images');
+            }])
+            ->get();
 
         if ($reservations->isEmpty()) {
             return $this->error('', 'No reservations found for this user', 404);
         }
-        return $reservations;
+        return $this->success(['reservations' => $reservations], 'Reservations found successfully', 200);
+    }
+
+    public function updateStatus(string $invoice, string $status)
+    {
+        $reservation = Reservation::where('invoice', $invoice)->first();
+        if (!$reservation) {
+            return $this->error($invoice, 'Reservation not found', 404);
+        }
+        $reservation->update(['statut' => $status]);
+        return $this->success(['reservation' => $reservation], 'Reservation status updated successfully', 200);
     }
 
     public function findByChambre(string $chambreSlug)
@@ -59,18 +75,37 @@ class ReservationRepositoryData implements ReservationRepository
             $query->where('slug', $chambreSlug);
         })->get();
 
+        $reservations = $reservations->map(function($reservation) {
+            return [
+                'date_debut' => $reservation->date_debut,
+                'date_fin' => $reservation->date_fin
+            ];
+        });
+
         if ($reservations->isEmpty()) {
             return $this->error('', 'No reservations found for this chambre', 404);
         }
-        return $reservations;
+        return $this->success(['reservations' => $reservations], 'Reservations found successfully', 200);
     }
 
-    public function findByStatus(string $status)
+    public function findByRiad()
     {
-        $reservations = Reservation::where('statut', $status)->get();
+        $riads = ChambreRepositoryData::employe('riad');
+        $chambres = Chambre::where('riad_id', $riads->id)->get();
+        $reservations = Reservation::whereHas('chambre', function($query) use ($chambres) {
+            $query->whereIn('id', $chambres->pluck('id'));
+        })->with(['chambre' => function($query) {
+            $query->with('images');
+        }])->get();
+
+        // return $this->error(['reservations' => $reservations], 'No riads found for this employee', 404);
+        // $reservations =
+
         if ($reservations->isEmpty()) {
-            return $this->error('', 'No reservations found with this status', 404);
+            return $this->error('', 'No reservations found for this riad', 404);
         }
-        return $reservations;
+        return $this->success(['reservations' => $reservations], 'Reservations found successfully', 200);
     }
+
+
 }

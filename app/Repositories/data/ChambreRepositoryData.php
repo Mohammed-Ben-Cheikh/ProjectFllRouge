@@ -91,7 +91,7 @@ class ChambreRepositoryData implements ChambreRepository
         return $this->success(['chambres' => $chambres->load('images')], 'Chambres found successfully', 200);
     }
 
-    static function employe($data)
+    public static function employe($data)
     {
         $user = auth()->user();
         $employe = Employe::where('user_id', $user->id)->first();

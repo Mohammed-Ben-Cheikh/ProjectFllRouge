@@ -13,31 +13,31 @@ return new class extends Migration
     {
         Schema::create('avis_chambers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Utilisateur
-            $table->foreignId('chamber_id')->constrained('chambres')->onDelete('cascade'); // Chambre
-            $table->integer('note')->nullable(); // Note de l'avis
-            $table->text('commentaire')->nullable(); // Commentaire de l'avis
-            $table->enum('statut', ['en_attente', 'publie', 'refuse'])->default('en_attente'); // Statut de l'avis
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('chamber_id')->constrained('chambres')->onDelete('cascade');
+            $table->integer('note')->nullable();
+            $table->text('commentaire')->nullable();
+            $table->enum('statut', ['en_attente', 'publie', 'refuse'])->default('en_attente');
             $table->timestamps();
         });
 
         Schema::create('avis_services', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Utilisateur
-            $table->foreignId('service_id')->constrained('services')->onDelete('cascade'); // Service
-            $table->integer('note')->nullable(); // Note de l'avis
-            $table->text('commentaire')->nullable(); // Commentaire de l'avis
-            $table->enum('statut', ['en_attente', 'publie', 'refuse'])->default('en_attente'); // Statut de l'avis
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('service_id')->constrained('services')->onDelete('cascade');
+            $table->integer('note')->nullable();
+            $table->text('commentaire')->nullable();
+            $table->enum('statut', ['en_attente', 'publie', 'refuse'])->default('en_attente');
             $table->timestamps();
         });
 
         Schema::create('avis_riads', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Utilisateur
-            $table->foreignId('riad_id')->constrained('riads')->onDelete('cascade'); // Riad
-            $table->integer('note')->nullable(); // Note de l'avis
-            $table->text('commentaire')->nullable(); // Commentaire de l'avis
-            $table->enum('statut', ['en_attente', 'publie', 'refuse'])->default('en_attente'); // Statut de l'avis
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('riad_id')->constrained('riads')->onDelete('cascade');
+            $table->integer('note')->nullable();
+            $table->text('commentaire')->nullable();
+            $table->enum('statut', ['en_attente', 'publie', 'refuse'])->default('en_attente');
             $table->timestamps();
         });
     }

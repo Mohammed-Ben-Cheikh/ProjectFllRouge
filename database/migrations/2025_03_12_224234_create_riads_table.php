@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->string('email')->nullable();
+            $table->string('rib')->nullable();
             $table->string('telephone')->nullable();
             $table->string('fax')->nullable();
             $table->string('city');

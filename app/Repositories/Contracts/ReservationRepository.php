@@ -9,7 +9,8 @@ interface ReservationRepository
     public function create(array $data);
     public function update($reservation, array $data);
     public function delete(string $slug);
-    public function findByUser(string $userSlug);
+    public function findByUser();
+    public function updateStatus(string $invoice, string $status);
     public function findByChambre(string $chambreSlug);
-    public function findByStatus(string $status);
+    public function findByRiad();
 }

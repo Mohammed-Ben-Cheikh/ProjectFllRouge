@@ -43,16 +43,19 @@ class EmployeRepositoryData implements EmployeRepository
             'activation_token' => $token,
             'password' => Hash::make($data['password']),
         ]);
-        // Envoyer un e-mail d'activation
-        if ($user) {
-            $user->notify(new ActivationNotification($token));
-        }
         $employe = Employe::create([
             'riad_id' => $data['riad_id'],
             'entreprise_id' => $data['entreprise_id'],
             'user_id' => $user->id,
         ]);
-        return $this->success(['employe' => $employe], 'Employe created successfully', 201);
+        if ($employe) {
+            // Envoyer un e-mail d'activation
+            if ($user) {
+                $user->notify(new ActivationNotification($token));
+            }
+            return $this->success(['employe' => $employe], 'Employe created successfully', 201);
+        } else
+            return $this->error(null, 'Failed to create employe');
     }
 
     public function delete(string $slug)

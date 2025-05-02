@@ -28,21 +28,18 @@ return new class extends Migration {
             $table->foreignId('chambre_id')->constrained('chambres')->onDelete('cascade'); // Chambre
         });
 
-        Schema::table('paiements', function (Blueprint $table) {
-            $table->foreignId('reservation_id')->constrained('reservations')->onDelete('cascade');
-        });
-
-        Schema::table('services', function (Blueprint $table) {
-            $table->foreignId('riad_id')->constrained('riads')->onDelete('cascade'); // Lien avec le riad
-        });
-
         Schema::table('service_reservations', function (Blueprint $table) {
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Utilisateur
             $table->foreignId('service_id')->constrained('services')->onDelete('cascade'); // Service
         });
 
-        Schema::table('paiement_services', function (Blueprint $table) {
-            $table->foreignId('service_reservation_id')->constrained('service_reservations')->onDelete('cascade'); // Lien avec le reservation
+        Schema::table('paiements', function (Blueprint $table) {
+            $table->foreignId('reservation_id')->nullable()->constrained('reservations')->onDelete('cascade');
+            $table->foreignId('service_reservation_id')->nullable()->constrained('service_reservations')->nullable()->onDelete('cascade');
+        });
+
+        Schema::table('services', function (Blueprint $table) {
+            $table->foreignId('riad_id')->constrained('riads')->onDelete('cascade'); // Lien avec le riad
         });
 
         Schema::table('favoris_riads', function (Blueprint $table) {
@@ -135,10 +132,6 @@ return new class extends Migration {
             $table->dropForeign(['riad_id']);
             $table->dropForeign(['entreprise_id']);
             $table->dropForeign(['user_id']);
-        });
-
-        Schema::table('paiement_services', function (Blueprint $table) {
-            $table->dropForeign(['service_reservation_id']);
         });
     }
 };

@@ -12,4 +12,6 @@ interface AvisRepository
     public function findByRiad(string $riadSlug);
     public function findByChambre(string $chambreSlug);
     public function findByService(string $serviceSlug);
+
+    public function findByVille(string $villeSlug);
 }

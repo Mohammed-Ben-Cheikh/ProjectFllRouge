@@ -5,6 +5,8 @@ namespace App\Repositories\data;
 use App\Models\AvisRiads;
 use App\Models\AvisChambers;
 use App\Models\AvisServices;
+use App\Models\Chambre;
+use App\Models\Riad;
 use App\Traits\HttpResponses;
 use App\Repositories\Contracts\AvisRepository;
 
@@ -42,7 +44,7 @@ class AvisRepositoryData implements AvisRepository
             case 'service':
                 return AvisServices::create($data);
             default:
-                return $this->error('Invalid avis type', 400);
+                return $this->error('Invalid avis type', 400, null);
         }
     }
 
@@ -56,7 +58,7 @@ class AvisRepositoryData implements AvisRepository
     {
         $avis = $this->findBySlug($slug);
         if (!$avis) {
-            return $this->error('Avis not found', 404);
+            return $this->error('Avis not found', 404, null);
         }
         $avis->delete();
         return $this->success('Avis deleted successfully', 200);
@@ -64,28 +66,45 @@ class AvisRepositoryData implements AvisRepository
 
     public function findByRiad(string $riadSlug)
     {
-        $avis = AvisRiads::where('slug', $riadSlug)->get();
+        $riad = Riad::where('slug', $riadSlug)->first();
+        $avis = AvisRiads::where('riad_id', '=', $riad->id)->get();
         if ($avis->isEmpty()) {
-            return $this->error('No avis found for this riad', 404);
+            return $this->error(null, 'No avis found for this riad', 404);
         }
-        return $avis;
+        return $this->success(['avis' => $avis], 'Avis found successfully', 200);
     }
 
     public function findByChambre(string $chambreSlug)
     {
-        $avis = AvisChambers::where('slug', $chambreSlug)->get();
+        $chamber = Chambre::where('slug', $chambreSlug)->first();
+        $avis = AvisChambers::where('chamber_id', $chamber->id)->get();
         if ($avis->isEmpty()) {
-            return $this->error('No avis found for this chambre', 404);
+            return $this->error(null, 'No avis found for this chambre', 404);
         }
-        return $avis;
+        return $this->success(['avis' => $avis], 'Avis found successfully', 200);
     }
 
     public function findByService(string $serviceSlug)
     {
         $avis = AvisServices::where('slug', $serviceSlug)->get();
         if ($avis->isEmpty()) {
-            return $this->error('No avis found for this service', 404);
+            return $this->error(null, 'No avis found for this service', 404);
         }
-        return $avis;
+        return $this->success(['avis' => $avis], 'Avis found successfully', 200);
     }
+
+    public function findByVille(string $villeSlug)
+    {
+        $riads = Riad::where('slug', $villeSlug)->get();
+        if ($riads->isEmpty()) {
+            return $this->error(null, 'No riads found for this ville', 404);
+        }
+        $avis = AvisRiads::whereIn('riad_id', $riads->pluck('id'))->get();
+        if ($avis->isEmpty()) {
+            return $this->error(null, 'No avis found for this ville', 404);
+        }
+        return $this->success(['avis' => $avis], 'Avis found successfully', 200);
+    }
+
+
 }

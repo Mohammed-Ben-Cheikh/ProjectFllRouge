@@ -115,17 +115,17 @@ Route::prefix('v1')->group(function () {
             Route::post('/chambres/{slug}', [ChambreController::class, 'updateStatus']);
             Route::delete('/chambres/{slug}', [ChambreController::class, 'destroy']);
 
-            Route::get('/reservations', [ReservationController::class, 'findByRiad']);
-            Route::post('/reservations/{slug}', [ChambreController::class, 'updateStatus']);
+            Route::get('/riads/reservations', [ReservationController::class, 'findByRiad']);
+            Route::post('/reservations/{invoice}', [ReservationController::class, 'updateStatus']);
         });
 
         // routes protégées pour les touristes
         Route::middleware('role:tourist')->prefix('tourist')->group(function () {
             // Routes pour les réservations
             Route::post('/reservations', [ReservationController::class, 'store']);
-            Route::put('/reservations/{slug}', [ReservationController::class, 'update']);
+            Route::post('/reservations/{invoice}/status', [ReservationController::class, 'updateStatus']);
             Route::delete('/reservations/{slug}', [ReservationController::class, 'destroy']);
-            Route::get('/users/{slug}/reservations', [ReservationController::class, 'findByUser']);
+            Route::get('/reservations', [ReservationController::class, 'findByUser']);
             Route::get('/chambres/{slug}/reservations', [ReservationController::class, 'findByChambre']);
 
             // // Routes pour les paiements

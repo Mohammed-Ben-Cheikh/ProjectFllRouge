@@ -13,7 +13,12 @@ return new class extends Migration
     {
         Schema::create('paiements', function (Blueprint $table) {
             $table->id();
+            $table->string('invoce')->unique();
+            $table->string('tourist_name')->nullable();
+            $table->string('tourist_email')->nullable();
             $table->decimal('montant', 8, 2)->nullable();
+            $table->enum('status', ['approved', 'pending', 'rejected'])->default('pending');
+            $table->string('reference_path')->nullable();
             $table->timestamps();
         });
     }

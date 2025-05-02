@@ -13,6 +13,7 @@ class Riad extends Model
 
     protected $fillable = [
         'name',
+        'rib',
         'status',
         'address',
         'email',

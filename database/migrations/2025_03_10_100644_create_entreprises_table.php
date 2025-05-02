@@ -25,7 +25,7 @@ return new class extends Migration {
             $table->integer('riadsCount')->default(0);
             $table->integer('employeesCount')->default(0);
             $table->boolean('destroy')->default(false);
-            $table->timestamps(); // Création des colonnes `created_at` et `updated_at`
+            $table->timestamps();
         });
     }
 

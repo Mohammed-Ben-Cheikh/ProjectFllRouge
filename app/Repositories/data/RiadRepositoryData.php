@@ -73,7 +73,9 @@ class RiadRepositoryData implements RiadRepository
                 $isPrimary = false;
             }
         }
-        if (!$riad) {
+        if ($riad) {
+            Ville::where('id', $data['ville_id'])->increment('total_riads');
+        } else {
             return $this->error('', 'Failed to create riad', 400);
         }
         return $this->success(['riad' => $riad->load('images')], 'Riad created successfully', 200);

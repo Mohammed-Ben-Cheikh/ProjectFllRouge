@@ -23,6 +23,7 @@ class StoreRiadRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255', 'unique:riads,name'],
+            'rib' => ['required', 'string', 'max:255'],
             'status' => ['sometimes', 'string', 'in:pending,approved,rejected'],
             'address' => ['required', 'string', 'max:255'],
             'email' => ['nullable', 'string', 'email', 'max:255'],

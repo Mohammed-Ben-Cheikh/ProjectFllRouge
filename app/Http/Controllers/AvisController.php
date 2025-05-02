@@ -60,7 +60,7 @@ class AvisController extends Controller
     /**
      * Find reviews by riad
      */
-    public function findByRiad($riadSlug)
+    public function findByRiad(string $riadSlug)
     {
         return $this->avisRepository->findByRiad($riadSlug);
     }
@@ -79,5 +79,13 @@ class AvisController extends Controller
     public function findByService($serviceSlug)
     {
         return $this->avisRepository->findByService($serviceSlug);
+    }
+
+    /**
+     * Find reviews by ville
+     */
+    public function findByVille($villeSlug)
+    {
+        return $this->avisRepository->findByVille($villeSlug);
     }
 }

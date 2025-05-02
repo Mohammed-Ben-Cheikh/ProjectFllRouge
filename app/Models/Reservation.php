@@ -10,13 +10,20 @@ class Reservation extends Model
     use HasFactory;
 
     protected $fillable = [
+        'invoice',
+        'rib',
+        'mode_paiement',
+        'note_client',
+        'nom_complet',
+        'email',
+        'telephone',
         'date_debut',
         'date_fin',
         'statut',
         'user_id',
         'chambre_id',
         'nombre_personnes',
-        'prix_total'
+        'montant_total',
     ];
 
     protected $casts = [

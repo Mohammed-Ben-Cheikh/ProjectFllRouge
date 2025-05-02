@@ -16,11 +16,14 @@ class StoreReservationRequest extends FormRequest
         return [
             'date_debut' => 'required|date|after:today',
             'date_fin' => 'required|date|after:date_debut',
-            'statut' => 'required|string|in:pending,confirmed,cancelled,completed',
-            'user_id' => 'required|exists:users,id',
             'chambre_id' => 'required|exists:chambres,id',
             'nombre_personnes' => 'required|integer|min:1',
-            'prix_total' => 'required|numeric|min:0'
+            'note_client' => 'nullable|string',
+            'nom_complet' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'telephone' => 'required|string|max:20',
+            'mode_paiement' => 'required|string|in:espece,carte,virement',
+            'montant_total' => 'required|numeric|min:0'
         ];
     }
 }

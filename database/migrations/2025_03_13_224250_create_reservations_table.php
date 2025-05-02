@@ -12,17 +12,19 @@ return new class extends Migration {
     {
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
-            $table->string('invoce')->unique(); // Référence de la facture
-            $table->date('date_debut')->nullable(); // Date de début de la réservation
-            $table->date('date_fin')->nullable(); // Date de fin de la réservation
-            $table->integer('nombre_personnes')->nullable(); // Nombre de personnes
+            $table->string('invoce')->unique();
+            $table->string('rib')->nullable();
+            $table->boolean('has_payment_proof')->default(false);
+            $table->date('date_debut')->nullable();
+            $table->date('date_fin')->nullable();
+            $table->integer('nombre_personnes')->nullable();
             $table->enum('statut', ['en_attente', 'confirmee', 'annulee', 'terminee'])->default('en_attente');
-            $table->enum('mode_paiement', ['carte', 'paypal', 'espece', 'virement'])->default('espece'); // Mode de paiement utilisé
-            $table->decimal('montant_total', 8, 2)->nullable(); // Prix total de la réservation
-            $table->text('note_client')->nullable(); // Optionnel : message ou note du client
-            $table->string('nom_complet')->nullable(); // Optionnel : nom du client si pas inscrit
-            $table->string('email')->nullable(); // Optionnel : email du client
-            $table->string('telephone')->nullable(); // Optionnel : téléphone
+            $table->enum('mode_paiement', ['espece', 'virement'])->default('espece');
+            $table->decimal('montant_total', 8, 2)->nullable();
+            $table->text('note_client')->nullable();
+            $table->string('nom_complet')->nullable();
+            $table->string('email')->nullable();
+            $table->string('telephone')->nullable();
             $table->timestamps();
         });
     }
