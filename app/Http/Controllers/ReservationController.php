@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reservation;
+use Illuminate\Http\Request;
 use App\Http\Requests\StoreReservationRequest;
 use App\Http\Requests\UpdateReservationRequest;
 use App\Repositories\Contracts\ReservationRepository;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreServicesReservationRequest;
 
 class ReservationController extends Controller
 {
@@ -31,14 +32,6 @@ class ReservationController extends Controller
     public function store(StoreReservationRequest $request)
     {
         return $this->reservationRepository->create($request->validated());
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show($slug)
-    {
-        return $this->reservationRepository->findBySlug($slug);
     }
 
     /**
@@ -87,5 +80,53 @@ class ReservationController extends Controller
     public function findByRiad()
     {
         return $this->reservationRepository->findByRiad();
+    }
+
+    /**
+     * Create a service reservation
+     */
+    public function storeServiceReservation(StoreServicesReservationRequest $request)
+    {
+        return $this->reservationRepository->createServiceReservation($request->validated());
+    }
+
+    /**
+     * Update a service reservation
+     */
+    public function updateServiceReservation($slug, StoreServicesReservationRequest $request)
+    {
+        return $this->reservationRepository->updateServiceReservation($slug, $request->validated());
+    }
+
+    /**
+     * Delete a service reservation
+     */
+    public function destroyServiceReservation($slug)
+    {
+        return $this->reservationRepository->deleteServiceReservation($slug);
+    }
+    /**
+     * Find service reservations by user
+     */
+
+    public function findServiceReservationByUser()
+    {
+        return $this->reservationRepository->findServiceReservationByUser();
+    }
+    /**
+     * Find reservations by service
+     */
+
+    public function findByService($serviceSlug)
+    {
+        return $this->reservationRepository->findByService($serviceSlug);
+    }
+
+    /**
+     * Update service reservation status
+     */
+    public function updateServiceReservationStatus($invoice, Request $request)
+    {
+        return $this->reservationRepository->updateServiceReservationStatus($invoice, $request->validate(['status' => 'required|in:en_attente,confirmee,annulee,terminee'])['status']);
     }
 }

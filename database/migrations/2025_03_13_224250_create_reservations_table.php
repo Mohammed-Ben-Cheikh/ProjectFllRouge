@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
-            $table->string('invoce')->unique();
+            $table->string('invoice')->unique();
             $table->string('rib')->nullable();
             $table->boolean('has_payment_proof')->default(false);
             $table->date('date_debut')->nullable();

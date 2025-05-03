@@ -50,6 +50,7 @@ class EmployeRepositoryData implements EmployeRepository
         ]);
         if ($employe) {
             // Envoyer un e-mail d'activation
+            Entreprise::where('id', $data['entreprise_id'])->increment('employeesCount');
             if ($user) {
                 $user->notify(new ActivationNotification($token));
             }

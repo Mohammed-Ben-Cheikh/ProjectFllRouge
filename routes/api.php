@@ -128,6 +128,13 @@ Route::prefix('v1')->group(function () {
             Route::get('/reservations', [ReservationController::class, 'findByUser']);
             Route::get('/chambres/{slug}/reservations', [ReservationController::class, 'findByChambre']);
 
+
+            Route::post('/reservations/service', [ReservationController::class, 'storeServiceReservation']);
+            Route::post('/reservations/service/{invoice}/status', [ReservationController::class, 'updateServiceReservationStatus']);
+            Route::delete('/reservations/service/{slug}', [ReservationController::class, 'destroyServiceReservation']);
+            Route::get('/reservations/service', [ReservationController::class, 'findServiceReservationByUser']);
+            Route::get('/services/{slug}/reservations', [ReservationController::class, 'findByService']);
+
             // // Routes pour les paiements
             // Route::get('/paiements', [PaiementController::class, 'index']);
             // Route::post('/paiements', [PaiementController::class, 'store']);

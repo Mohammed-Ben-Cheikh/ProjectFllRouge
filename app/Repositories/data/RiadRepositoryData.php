@@ -75,6 +75,7 @@ class RiadRepositoryData implements RiadRepository
         }
         if ($riad) {
             Ville::where('id', $data['ville_id'])->increment('total_riads');
+            Entreprise::where('id', $data['entreprise_id'])->increment('riadsCount');
         } else {
             return $this->error('', 'Failed to create riad', 400);
         }

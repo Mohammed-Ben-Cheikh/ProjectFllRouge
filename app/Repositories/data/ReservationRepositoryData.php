@@ -4,7 +4,10 @@ namespace App\Repositories\data;
 
 use App\Models\Chambre;
 use App\Models\Reservation;
+use App\Models\Riad;
+use App\Models\Service;
 use App\Traits\HttpResponses;
+use App\Models\ServiceReservation;
 use App\Repositories\Contracts\ReservationRepository;
 
 class ReservationRepositoryData implements ReservationRepository
@@ -107,5 +110,70 @@ class ReservationRepositoryData implements ReservationRepository
         return $this->success(['reservations' => $reservations], 'Reservations found successfully', 200);
     }
 
+    public function createServiceReservation(array $data){
+        $data['user_id'] = auth()->user()->id;
+        $data['invoice'] = 'INV-' . strtoupper(uniqid());
 
+        $reservation = ServiceReservation::create($data);
+
+        $service = Service::where('id', $data['service_id'])->first();
+        $riad = Riad::where('id', $service->riad_id)->first();
+        
+        if ($reservation) {
+            Riad::where('id', $riad->id)->increment('reservations');
+        }
+        return $this->success(['reservation' => $reservation], 'Reservation created successfully', 201);
+    }
+
+    public function updateServiceReservation($reservation, array $data){
+        $reservation->update($data);
+        return $reservation;
+    }
+    public function deleteServiceReservation(string $slug){
+        $reservation = $this->findBySlug($slug);
+        if (!$reservation) {
+            return $this->error('', 'Reservation not found', 404);
+        }
+        $reservation->delete();
+        return $this->success('', 'Reservation deleted successfully', 200);
+    }
+
+    public function findServiceReservationByUser(){
+        $reservations = ServiceReservation::where('user_id', auth()->user()->id)
+            ->with(['service' => function($query) {
+                $query->with('images');
+            }])
+            ->get();
+
+        if ($reservations->isEmpty()) {
+            return $this->error('', 'No reservations found for this user', 404);
+        }
+        return $this->success(['reservations' => $reservations], 'Reservations found successfully', 200);
+    }
+
+    public function updateServiceReservationStatus(string $invoice, string $status){
+        $reservation = ServiceReservation::where('invoice', $invoice)->first();
+        if (!$reservation) {
+            return $this->error($invoice, 'Reservation not found', 404);
+        }
+        $reservation->update(['statut' => $status]);
+        return $this->success(['reservation' => $reservation], 'Reservation status updated successfully', 200);
+    }
+
+    public function findByService(string $serviceSlug){
+        $reservations = ServiceReservation::whereHas('service', function($query) use ($serviceSlug) {
+            $query->where('slug', $serviceSlug);
+        })->get();
+
+        $reservations = $reservations->map(function($reservation) {
+            return [
+                'date' => $reservation->date,
+            ];
+        });
+
+        if ($reservations->isEmpty()) {
+            return $this->error('', 'No reservations found for this service', 404);
+        }
+        return $this->success(['reservations' => $reservations], 'Reservations found successfully', 200);
+    }
 }
