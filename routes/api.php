@@ -115,8 +115,9 @@ Route::prefix('v1')->group(function () {
             Route::post('/chambres/{slug}', [ChambreController::class, 'updateStatus']);
             Route::delete('/chambres/{slug}', [ChambreController::class, 'destroy']);
 
-            Route::get('/riads/reservations', [ReservationController::class, 'findByRiad']);
-            Route::post('/reservations/{invoice}', [ReservationController::class, 'updateStatus']);
+            Route::get('/riads/reservations/chambres', [ReservationController::class, 'findByRiadForChambres']);
+            Route::get('/riads/reservations/services', [ReservationController::class, 'findByRiadForServices']);
+            Route::post('/reservations/{invoice}/type/{type}', [ReservationController::class, 'updateStatus']);
         });
 
         // routes protégées pour les touristes
@@ -148,6 +149,24 @@ Route::prefix('v1')->group(function () {
             Route::post('/favoris', [FavorisController::class, 'store']);
             Route::delete('/favoris/{slug}', [FavorisController::class, 'destroy']);
             Route::get('/users/{username}/favoris', [FavorisController::class, 'findByUser']);
+
+
+            Route::post('/avis/chambres', [AvisController::class, 'storeByChambre']);
+            Route::post('/avis/services', [AvisController::class, 'storeByService']);
+            Route::post('/avis/riads', [AvisController::class, 'storeByRiad']);
+
+            Route::delete('/avis/chambres/{id}', [AvisController::class, 'destroyByChambre']);
+            Route::delete('/avis/riads/{id}', [AvisController::class, 'destroyByRiad']);
+            Route::delete('/avis/services/{id}', [AvisController::class, 'destroyByService']);
+
+            Route::get('/mes-avis-chambres', [AvisController::class, 'findByUserChambres']);
+            Route::get('/mes-avis-services', [AvisController::class, 'findByUserServices']);
+            Route::get('/mes-avis-riads', [AvisController::class, 'findByUserRiads']);
+
+            Route::delete('/avis/villes/{id}', [AvisController::class, 'destroyByVille']);
+            Route::post('/avis/villes', [AvisController::class, 'storeByVille']);
+            Route::get('/mes-avis-villes', [AvisController::class, 'findByUserVilles']);
+
         });
     });
 });

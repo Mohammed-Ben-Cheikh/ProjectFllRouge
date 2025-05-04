@@ -9,7 +9,7 @@ interface ReservationRepository
     public function update($reservation, array $data);
     public function delete(string $slug);
     public function findByUser();
-    public function updateStatus(string $invoice, string $status);
+    public function updateStatus(string $invoice, string $type, string $status);
     public function findByChambre(string $chambreSlug);
     public function createServiceReservation(array $data);
     public function updateServiceReservation($reservation, array $data);
@@ -17,5 +17,6 @@ interface ReservationRepository
     public function findServiceReservationByUser();
     public function updateServiceReservationStatus(string $invoice, string $status);
     public function findByService(string $serviceSlug);
-    public function findByRiad();
+    public function findByRiadForChambres();
+    public function findByRiadForServices();
 }

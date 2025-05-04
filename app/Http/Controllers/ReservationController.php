@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreReservationRequest;
-use App\Http\Requests\UpdateReservationRequest;
 use App\Repositories\Contracts\ReservationRepository;
 use App\Http\Requests\StoreServicesReservationRequest;
 
@@ -61,9 +60,9 @@ class ReservationController extends Controller
     /**
      * updeate reservation status
      */
-    public function updateStatus($invoice, Request $request)
+    public function updateStatus($invoice, $type, Request $request, )
     {
-        return $this->reservationRepository->updateStatus($invoice, $request->validate(['status' => 'required|in:en_attente,confirmee,annulee,terminee'])['status']);
+        return $this->reservationRepository->updateStatus($invoice, $type, $request->validate(['status' => 'required|in:en_attente,confirmee,annulee,terminee'])['status']);
     }
 
     /**
@@ -77,9 +76,14 @@ class ReservationController extends Controller
     /**
      * Find reservations by status
      */
-    public function findByRiad()
+    public function findByRiadForChambres()
     {
-        return $this->reservationRepository->findByRiad();
+        return $this->reservationRepository->findByRiadForChambres();
+    }
+
+    public function findByRiadForServices()
+    {
+        return $this->reservationRepository->findByRiadForServices();
     }
 
     /**
