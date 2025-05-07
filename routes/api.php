@@ -29,12 +29,12 @@ Route::prefix('v1')->group(function () {
     Route::get('/riads', [RiadController::class, 'index']);
     Route::get('/riads/images', [RiadController::class, 'images']);
     Route::get('/riads/{slug}', [RiadController::class, 'show']);
-    Route::get('/riads/{slug}/avis', [AvisController::class, 'findByRiad']);
+    // Route::get('/riads/{slug}/avis', [AvisController::class, 'findByRiad']);
     Route::get('/riads/{slug}/services', [ServiceController::class, 'findByRiad']);
 
     Route::get('/villes', [VilleController::class, 'index']);
     Route::get('/villes/{slug}', [VilleController::class, 'show']);
-    Route::get('/villes/{slug}/avis', [AvisController::class, 'findByVille']);
+    // Route::get('/villes/{slug}/avis', [AvisController::class, 'findByVille']);
     Route::get('/villes/{slug}/riads', [RiadController::class, 'findByVille']);
     Route::get('/villes/{slug}/services', [ServiceController::class, 'findByVille']);
 
@@ -45,7 +45,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/chambres', [ChambreController::class, 'index']);
     Route::get('/riads/{slug}/chambres', [ChambreController::class, 'findByRiad']);
     Route::get('/chambres/{slug}', [ChambreController::class, 'show']);
-    Route::get('/chambres/{slug}/avis', [AvisController::class, 'findByChambre']);
+    // Route::get('/chambres/{slug}/avis', [AvisController::class, 'findByChambre']);
 
     // Routes sécurisées
     Route::middleware('auth:api')->group(function () {
@@ -118,54 +118,51 @@ Route::prefix('v1')->group(function () {
             Route::get('/riads/reservations/chambres', [ReservationController::class, 'findByRiadForChambres']);
             Route::get('/riads/reservations/services', [ReservationController::class, 'findByRiadForServices']);
             Route::post('/reservations/{invoice}/type/{type}', [ReservationController::class, 'updateStatus']);
+
+            Route::get('/riads/payments', [PaiementController::class, 'index']);
+            Route::post('/riad/payment-receipts/{invoice}/status', [PaiementController::class, 'updateStatus']);
         });
 
         // routes protégées pour les touristes
         Route::middleware('role:tourist')->prefix('tourist')->group(function () {
-            // Routes pour les réservations
+            // Routes pour les réservations des chambres
             Route::post('/reservations', [ReservationController::class, 'store']);
             Route::post('/reservations/{invoice}/status', [ReservationController::class, 'updateStatus']);
             Route::delete('/reservations/{slug}', [ReservationController::class, 'destroy']);
             Route::get('/reservations', [ReservationController::class, 'findByUser']);
             Route::get('/chambres/{slug}/reservations', [ReservationController::class, 'findByChambre']);
 
-
+            // Routes pour les réservations des services
             Route::post('/reservations/service', [ReservationController::class, 'storeServiceReservation']);
             Route::post('/reservations/service/{invoice}/status', [ReservationController::class, 'updateServiceReservationStatus']);
             Route::delete('/reservations/service/{slug}', [ReservationController::class, 'destroyServiceReservation']);
             Route::get('/reservations/service', [ReservationController::class, 'findServiceReservationByUser']);
             Route::get('/services/{slug}/reservations', [ReservationController::class, 'findByService']);
 
-            // // Routes pour les paiements
-            // Route::get('/paiements', [PaiementController::class, 'index']);
-            // Route::post('/paiements', [PaiementController::class, 'store']);
-            // Route::get('/paiements/{slug}', [PaiementController::class, 'show']);
-            // Route::put('/paiements/{slug}', [PaiementController::class, 'update']);
-            // Route::delete('/paiements/{slug}', [PaiementController::class, 'destroy']);
-            // Route::get('/reservations/{slug}/paiements', [PaiementController::class, 'findByReservation']);
-            // Route::get('/users/{slug}/paiements', [PaiementController::class, 'findByUser']);
+            //route pour le paiement
+            Route::post('/reservation/upload-payment-receipt', [PaiementController::class, 'store']);
 
             // Routes pour les favoris
             Route::post('/favoris', [FavorisController::class, 'store']);
             Route::delete('/favoris/{slug}', [FavorisController::class, 'destroy']);
             Route::get('/users/{username}/favoris', [FavorisController::class, 'findByUser']);
 
+            // Routes pour les avis
+            // Route::post('/avis/chambres', [AvisController::class, 'storeByChambre']);
+            // Route::post('/avis/services', [AvisController::class, 'storeByService']);
+            // Route::post('/avis/riads', [AvisController::class, 'storeByRiad']);
 
-            Route::post('/avis/chambres', [AvisController::class, 'storeByChambre']);
-            Route::post('/avis/services', [AvisController::class, 'storeByService']);
-            Route::post('/avis/riads', [AvisController::class, 'storeByRiad']);
+            // Route::delete('/avis/chambres/{id}', [AvisController::class, 'destroyByChambre']);
+            // Route::delete('/avis/riads/{id}', [AvisController::class, 'destroyByRiad']);
+            // Route::delete('/avis/services/{id}', [AvisController::class, 'destroyByService']);
 
-            Route::delete('/avis/chambres/{id}', [AvisController::class, 'destroyByChambre']);
-            Route::delete('/avis/riads/{id}', [AvisController::class, 'destroyByRiad']);
-            Route::delete('/avis/services/{id}', [AvisController::class, 'destroyByService']);
+            // Route::get('/mes-avis-chambres', [AvisController::class, 'findByUserChambres']);
+            // Route::get('/mes-avis-services', [AvisController::class, 'findByUserServices']);
+            // Route::get('/mes-avis-riads', [AvisController::class, 'findByUserRiads']);
 
-            Route::get('/mes-avis-chambres', [AvisController::class, 'findByUserChambres']);
-            Route::get('/mes-avis-services', [AvisController::class, 'findByUserServices']);
-            Route::get('/mes-avis-riads', [AvisController::class, 'findByUserRiads']);
-
-            Route::delete('/avis/villes/{id}', [AvisController::class, 'destroyByVille']);
-            Route::post('/avis/villes', [AvisController::class, 'storeByVille']);
-            Route::get('/mes-avis-villes', [AvisController::class, 'findByUserVilles']);
+            // Route::delete('/avis/villes/{id}', [AvisController::class, 'destroyByVille']);
+            // Route::post('/avis/villes', [AvisController::class, 'storeByVille']);
+            // Route::get('/mes-avis-villes', [AvisController::class, 'findByUserVilles']);
 
         });
     });

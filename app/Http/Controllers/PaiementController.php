@@ -6,9 +6,12 @@ use App\Models\Paiement;
 use App\Http\Requests\StorePaiementRequest;
 use App\Http\Requests\UpdatePaiementRequest;
 use App\Repositories\Contracts\PaiementRepository;
+use App\Traits\HttpResponses;
+use Illuminate\Http\Request;
 
 class PaiementController extends Controller
 {
+    use HttpResponses;
     protected $paiementRepository;
 
     public function __construct(PaiementRepository $paiementRepository)
@@ -41,14 +44,6 @@ class PaiementController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     */
-    public function update($slug, StorePaiementRequest $request)
-    {
-        return $this->paiementRepository->update($slug, $request->validated());
-    }
-
-    /**
      * Remove the specified resource from storage.
      */
     public function destroy($slug)
@@ -70,5 +65,13 @@ class PaiementController extends Controller
     public function findByUser($userSlug)
     {
         return $this->paiementRepository->findByUser($userSlug);
+    }
+
+    /**
+     * update the status of a payment
+     */
+    public function updateStatus($invoice, Request $request)
+    {
+        return $this->paiementRepository->updateStatus($invoice, $request->validate(['status' => 'required|in:approved,pending,rejected'])['status']);
     }
 }

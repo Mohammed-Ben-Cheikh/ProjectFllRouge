@@ -14,11 +14,11 @@ class StorePaiementRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'montant' => 'required|numeric|min:0',
-            'statut' => 'required|string|in:pending,completed,failed,refunded',
-            'methode_paiement' => 'required|string|in:card,bank_transfer,cash',
-            'reservation_id' => 'required|exists:reservations,id',
-            'reference_transaction' => 'required|string|unique:paiements,reference_transaction'
+            'invoice' => 'required|string|unique:paiements,invoice',
+            'tourist_name' => 'nullable|string',
+            'tourist_email' => 'nullable|email',
+            'montant' => 'nullable|numeric|min:0',
+            'reference_File' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ];
     }
 }

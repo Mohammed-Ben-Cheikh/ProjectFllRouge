@@ -27,8 +27,8 @@ class Chambre extends Model
     ];
 
     protected $casts = [
-        'equipements' => 'array', // Auto-converts JSON <-> PHP array
-        'capacity' => 'array',    // If you're using JSON for capacity too
+        'equipements' => 'array', 
+        'capacity' => 'array',
     ];
 
     public function riad()

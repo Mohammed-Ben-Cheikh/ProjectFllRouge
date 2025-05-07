@@ -11,4 +11,5 @@ interface PaiementRepository
     public function delete(string $slug);
     public function findByReservation(string $reservationSlug);
     public function findByUser(string $userSlug);
+    public function updateStatus($invoice, $status);
 }

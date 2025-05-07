@@ -11,14 +11,28 @@ class Paiement extends Model
 
     protected $fillable = [
         'montant',
-        'statut',
-        'methode_paiement',
+        'invoice',
+        'tourist_name',
+        'tourist_email',
+        'reference_path',
         'reservation_id',
-        'reference_transaction'
+        'status',
+        'service_reservation_id',
+        'riad_id'
     ];
 
     public function reservation()
     {
         return $this->belongsTo(Reservation::class);
+    }
+
+    public function serviceReservation()
+    {
+        return $this->belongsTo(ServiceReservation::class);
+    }
+
+    public function riad($value)
+    {
+        return $this->belongsTo(Riad::class);
     }
 }
