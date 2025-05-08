@@ -100,4 +100,12 @@ class AuthController extends Controller
         // Using repository to get role ID
         return app(AuthControllerRepository::class)->getRoleIdByName($role);
     }
+
+    /**
+     * becomeOwner
+     */
+    public function becomeOwner()
+    {
+        return $this->authRepository->becomeOwner();
+    }
 }

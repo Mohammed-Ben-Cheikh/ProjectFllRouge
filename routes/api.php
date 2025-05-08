@@ -125,6 +125,7 @@ Route::prefix('v1')->group(function () {
 
         // routes protégées pour les touristes
         Route::middleware('role:tourist')->prefix('tourist')->group(function () {
+            Route::post('/become-owner' , [AuthController::class, 'becomeOwner']);
             // Routes pour les réservations des chambres
             Route::post('/reservations', [ReservationController::class, 'store']);
             Route::post('/reservations/{invoice}/status', [ReservationController::class, 'updateStatus']);

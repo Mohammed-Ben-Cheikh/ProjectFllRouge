@@ -12,4 +12,5 @@ interface AuthControllerRepository
     public function resetUserPassword(string $token, string $password);
     public function updateUserImage($image);
     public function getRoleIdByName(string $roleName);
+    public function becomeOwner();
 }

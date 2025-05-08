@@ -243,4 +243,22 @@ class AuthControllerRepositoryData implements AuthControllerRepository
         $role = Role::where('name', $roleName)->first();
         return $role ? $role->id : null;
     }
+
+    public function becomeOwner(){
+        $user = Auth::user();
+        if (!$user) {
+            return $this->error(null, 'User not authenticated', 401);
+        }
+
+        try {
+            $roleId = $this->getRoleIdByName('owner');
+            if ($roleId) {
+                $user->update(['role_id' => $roleId]);
+                return $this->success(['user' => $user], 'User role updated to owner successfully');
+            }
+            return $this->error(null, 'Failed to update user role', 400);
+        } catch (Exception $e) {
+            return $this->error(null, 'Failed to update user role: ' . $e->getMessage(), 500);
+        }
+    }
 }
